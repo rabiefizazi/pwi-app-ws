@@ -16,8 +16,11 @@ public interface InventoryCountService {
 	public InventoryCountDto getInventoryCount(StoreDto storeDto, DepartmentDto departmentDto,
 			LocalDate weekEndDate, ItemDto itemDto);
 
+	
 	public List<InventoryCountDto> getInventoryCounts(StoreDto storeDto, DepartmentDto departmentDto,
 			LocalDate weekEndDate);
+	
+	public List<InventoryCountDto> getInventoryCountsSummary(StoreDto storeDto, DepartmentDto departmentDto);
 
 	public InventoryCountDto createInventoryCount(InventoryCountDto inventoryCountDto);
 

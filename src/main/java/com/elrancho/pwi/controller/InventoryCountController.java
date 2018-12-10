@@ -3,7 +3,9 @@ package com.elrancho.pwi.controller;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +23,19 @@ import com.elrancho.pwi.service.DepartmentService;
 import com.elrancho.pwi.service.InventoryCountService;
 import com.elrancho.pwi.service.ItemService;
 import com.elrancho.pwi.service.StoreService;
+import com.elrancho.pwi.service.UserService;
 import com.elrancho.pwi.shared.dto.DepartmentDto;
 import com.elrancho.pwi.shared.dto.InventoryCountDto;
 import com.elrancho.pwi.shared.dto.ItemDto;
 import com.elrancho.pwi.shared.dto.StoreDto;
+import com.elrancho.pwi.shared.dto.UserDto;
 import com.elrancho.pwi.ui.model.request.InventoryCountDetailRequestModel;
 import com.elrancho.pwi.ui.model.response.InventoryCountRest;
+import com.elrancho.pwi.ui.model.response.InventoryCountSummaryRest;
+import com.elrancho.pwi.ui.model.response.InventoryCountSummaryRestList;
+import com.elrancho.pwi.ui.model.response.OperationStatusModel;
+import com.elrancho.pwi.ui.model.response.RequestOperationName;
+import com.elrancho.pwi.ui.model.response.RequestOperationStatus;
 
 @RestController
 @RequestMapping(path = "/inventorycounts")
@@ -39,10 +48,12 @@ public class InventoryCountController {
 	@Autowired
 	DepartmentService departmentService;
 	@Autowired
+	UserService userService;
+	@Autowired
 	ItemService itemService;
 
 	@GetMapping(path = "/{storeId}/{departmentId}/{vendorItem}/{weekEndDateString}", produces = {
-			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public InventoryCountRest getInventoryCount(@PathVariable long storeId, @PathVariable long departmentId,
 			@PathVariable long vendorItem, @PathVariable String weekEndDateString) {
 
@@ -60,8 +71,9 @@ public class InventoryCountController {
 
 	}
 
-	@GetMapping(path = "/{storeId}/{departmentId}/{weekEndDateString}", produces = { MediaType.APPLICATION_XML_VALUE,
-			MediaType.APPLICATION_JSON_VALUE })
+	// Get inventory count details by store by department by week end date
+	@GetMapping(path = "/{storeId}/{departmentId}/{weekEndDateString}", produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
 	public List<InventoryCountRest> getInventoryCount(@PathVariable long storeId, @PathVariable long departmentId,
 			@PathVariable String weekEndDateString) {
 
@@ -85,22 +97,88 @@ public class InventoryCountController {
 
 	}
 
-	@PostMapping(path="/new", consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
-			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public InventoryCountRest createInventoryCount(@RequestBody InventoryCountDetailRequestModel inventoryCountDetail) {
+	// Get inventory count summary by store by department by week end date
 
-		InventoryCountRest returnValue = new InventoryCountRest();
-		ModelMapper modelMapper = new ModelMapper();
-		InventoryCountDto newInventoryCount = inventoryCountService
-				.createInventoryCount(modelMapper.map(inventoryCountDetail, InventoryCountDto.class));
+	@GetMapping(path = "/totalInventory/{storeId}/{departmentId}", produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
+	public InventoryCountSummaryRestList getInventoryCountSummary(@PathVariable long storeId,
+			@PathVariable long departmentId) {
 
-		returnValue = modelMapper.map(newInventoryCount, InventoryCountRest.class);
+		InventoryCountSummaryRestList inventoryCountSummaryRestList = new InventoryCountSummaryRestList();
+		List<InventoryCountSummaryRest> inventoryCountSummaryRests = new ArrayList<>();
 
-		return returnValue;
+		StoreDto storeDto = storeService.getStore(storeId);
+		DepartmentDto departmentDto = departmentService.getDepartment(storeId, departmentId);
+
+		Iterable<InventoryCountDto> inventoryCounts = inventoryCountService.getInventoryCountsSummary(storeDto,
+				departmentDto);
+
+		Map<LocalDate, Double> totalAmountMap = new LinkedHashMap<>();
+
+		double currentAmount, totalAmount;
+		for (InventoryCountDto inventoryCount : inventoryCounts) {
+			currentAmount = inventoryCount.getQuantity() * inventoryCount.getCost();
+
+			if (totalAmountMap.get(inventoryCount.getWeekEndDate()) != null)
+				totalAmount = totalAmountMap.get(inventoryCount.getWeekEndDate()) + currentAmount;
+
+			else
+				totalAmount = currentAmount;
+			totalAmountMap.put(inventoryCount.getWeekEndDate(), totalAmount);
+		}
+
+		InventoryCountSummaryRest inventoryCountSummaryRest;
+
+		for (Map.Entry<LocalDate, Double> entry : totalAmountMap.entrySet()) {
+			inventoryCountSummaryRest = new InventoryCountSummaryRest();
+			inventoryCountSummaryRest.setStoreId(storeId);
+			inventoryCountSummaryRest.setDepartmentId(departmentId);
+			inventoryCountSummaryRest.setWeekEndDate(entry.getKey());
+			inventoryCountSummaryRest.setTotalInventory(entry.getValue());
+			inventoryCountSummaryRests.add(inventoryCountSummaryRest);
+		}
+		
+		inventoryCountSummaryRestList.setInventoryCountSummaries(inventoryCountSummaryRests);
+
+		return inventoryCountSummaryRestList;
+
 	}
 
-	@PutMapping(path="/update", consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
-			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	@PostMapping(path = "/new", consumes = { MediaType.APPLICATION_XML_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
+					MediaType.APPLICATION_XML_VALUE })
+	public OperationStatusModel createInventoryCount(
+			@RequestBody InventoryCountDetailRequestModel inventoryCountDetail) {
+
+		OperationStatusModel operationStatusModel = new OperationStatusModel();
+		operationStatusModel.setOperationName(RequestOperationName.CREATE_NEW_INVENTORY_COUNT.name());
+		operationStatusModel.setOperationResult(RequestOperationStatus.SUCCESS.name());
+
+		StoreDto storeDto = storeService.getStore(inventoryCountDetail.getStoreId());
+		DepartmentDto departmentDto = departmentService.getDepartment(inventoryCountDetail.getStoreId(),
+				inventoryCountDetail.getDepartmentId());
+		ItemDto itemDto = itemService.getItem(inventoryCountDetail.getStoreId(), inventoryCountDetail.getVendorItem());
+		UserDto userDto = userService.getUserByUserId(inventoryCountDetail.getUserId());
+
+		InventoryCountDto inventoryCountDto = new InventoryCountDto();
+		inventoryCountDto.setStoreDetails(storeDto);
+		inventoryCountDto.setDepartmentDetails(departmentDto);
+		inventoryCountDto.setItemDetails(itemDto);
+		inventoryCountDto.setUserDetails(userDto);
+		inventoryCountDto.setCost(inventoryCountDetail.getCost());
+		inventoryCountDto.setQuantity(inventoryCountDetail.getQuantity());
+
+		InventoryCountDto newInventoryCount = inventoryCountService.createInventoryCount(inventoryCountDto);
+
+		if (newInventoryCount == null)
+			operationStatusModel.setOperationResult(RequestOperationStatus.ERROR.name());
+
+		return operationStatusModel;
+	}
+
+	@PutMapping(path = "/update", consumes = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
+					MediaType.APPLICATION_XML_VALUE })
 	public InventoryCountRest updateInventoryCount(@RequestBody InventoryCountDetailRequestModel inventoryCountDetail) {
 
 		ModelMapper modelMapper = new ModelMapper();
@@ -110,9 +188,9 @@ public class InventoryCountController {
 		return modelMapper.map(newInventoryCount, InventoryCountRest.class);
 
 	}
-	
+
 	@DeleteMapping(path = "/{storeId}/{departmentId}/{vendorItem}/{weekEndDateString}", produces = {
-			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public InventoryCountRest deleteInventoryCount(@PathVariable long storeId, @PathVariable long departmentId,
 			@PathVariable long vendorItem, @PathVariable String weekEndDateString) {
 

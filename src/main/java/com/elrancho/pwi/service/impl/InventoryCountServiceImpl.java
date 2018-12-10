@@ -63,8 +63,7 @@ public class InventoryCountServiceImpl implements InventoryCountService {
 	}
 
 	@Override
-	public List<InventoryCountDto> getInventoryCounts(StoreDto storeDto, DepartmentDto departmentDto,
-			LocalDate weekEndDate) {
+	public List<InventoryCountDto> getInventoryCounts(StoreDto storeDto, DepartmentDto departmentDto, LocalDate weekEndDate) {
 
 		List<InventoryCountDto> returnValue = new ArrayList<>();
 
@@ -75,6 +74,26 @@ public class InventoryCountServiceImpl implements InventoryCountService {
 		Iterable<InventoryCountEntity> inventoryCounts = inventoryCountRepository
 				.findInventoryCountByStoreDetailsAndDepartmentDetailsAndWeekEndDate(storeEntity, departmentEntity,
 						weekEndDate);
+
+		ModelMapper modelMapper = new ModelMapper();
+
+		for (InventoryCountEntity inventoryCount : inventoryCounts)
+			returnValue.add(modelMapper.map(inventoryCount, InventoryCountDto.class));
+
+		return returnValue;
+	}
+	
+	@Override
+	public List<InventoryCountDto> getInventoryCountsSummary(StoreDto storeDto, DepartmentDto departmentDto) {
+
+		List<InventoryCountDto> returnValue = new ArrayList<>();
+
+		StoreEntity storeEntity = storeRepository.findStoreByStoreId(storeDto.getStoreId());
+		DepartmentEntity departmentEntity = departmentRepository
+				.findDepartmentByDepartmentId(departmentDto.getDepartmentId());
+
+		Iterable<InventoryCountEntity> inventoryCounts = inventoryCountRepository
+				.findInventoryCountByStoreDetailsAndDepartmentDetails(storeEntity, departmentEntity);
 
 		ModelMapper modelMapper = new ModelMapper();
 
@@ -154,6 +173,5 @@ public class InventoryCountServiceImpl implements InventoryCountService {
 		inventoryCountRepository.delete(inventoryCountEntity);
 
 		return returnValue;
-	}
-
+	}	
 }

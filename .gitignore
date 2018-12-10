@@ -23,3 +23,5 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+src/main/java/com/elrancho/pwi/shared/AmazonSES.java
+src/main/resources/application.properties

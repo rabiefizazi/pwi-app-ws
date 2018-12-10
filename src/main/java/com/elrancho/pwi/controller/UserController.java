@@ -29,6 +29,7 @@ import com.elrancho.pwi.ui.model.request.PasswordResetModel;
 import com.elrancho.pwi.ui.model.request.PasswordResetRequestModel;
 import com.elrancho.pwi.ui.model.request.UserDetailRequestModel;
 import com.elrancho.pwi.ui.model.response.OperationStatusModel;
+import com.elrancho.pwi.ui.model.response.RequestOperationName;
 import com.elrancho.pwi.ui.model.response.RequestOperationStatus;
 import com.elrancho.pwi.ui.model.response.UserRest;
 

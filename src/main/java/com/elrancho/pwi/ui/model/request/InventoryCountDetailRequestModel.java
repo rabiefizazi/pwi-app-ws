@@ -1,42 +1,39 @@
 package com.elrancho.pwi.ui.model.request;
 
-import com.elrancho.pwi.shared.dto.DepartmentDto;
-import com.elrancho.pwi.shared.dto.ItemDto;
-import com.elrancho.pwi.shared.dto.StoreDto;
-import com.elrancho.pwi.shared.dto.UserDto;
-
 public class InventoryCountDetailRequestModel {
 
-	private StoreDto storeDetails;
-	private DepartmentDto departmentDetails;
-	private UserDto userDetails;
-	private ItemDto itemDetails;
+	private long storeId;
+	private long departmentId;
+	private String userId;
+	private long vendorItem;
 	private double cost;
 	private double quantity;
 	
-	public StoreDto getStoreDetails() {
-		return storeDetails;
+	public long getStoreId() {
+		return storeId;
 	}
-	public void setStoreDetails(StoreDto storeDetails) {
-		this.storeDetails = storeDetails;
+	public void setStoreId(long storeId) {
+		this.storeId = storeId;
 	}
-	public DepartmentDto getDepartmentDetails() {
-		return departmentDetails;
+	
+	
+	public long getDepartmentId() {
+		return departmentId;
 	}
-	public void setDepartmentDetails(DepartmentDto departmentDetails) {
-		this.departmentDetails = departmentDetails;
+	public void setDepartmentId(long departmentId) {
+		this.departmentId = departmentId;
 	}
-	public UserDto getUserDetails() {
-		return userDetails;
+	public String getUserId() {
+		return userId;
 	}
-	public void setUserDetails(UserDto userDetails) {
-		this.userDetails = userDetails;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
-	public ItemDto getItemDetails() {
-		return itemDetails;
+	public long getVendorItem() {
+		return vendorItem;
 	}
-	public void setItemDetails(ItemDto itemDetails) {
-		this.itemDetails = itemDetails;
+	public void setVendorItem(long vendorItem) {
+		this.vendorItem = vendorItem;
 	}
 	public double getCost() {
 		return cost;

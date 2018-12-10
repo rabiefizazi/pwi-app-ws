@@ -30,6 +30,9 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 		DepartmentEntity departmentEntity = departmentRepository
 				.findDepartmentByStoreDetailsAndDepartmentId(storeRepository.findStoreByStoreId(storeId), departmentId);
+		if (departmentEntity== null)
+			
+			throw new RuntimeException("Department " + departmentId + " not found.");
 		
 		ModelMapper modelMapper = new ModelMapper();
 		return modelMapper.map(departmentEntity, DepartmentDto.class);
@@ -68,11 +71,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 	@Override
 	public DepartmentDto creatDepartment(DepartmentDto departmentDto) {
 
-		if (departmentRepository.findDepartmentByDepartmentId(departmentDto.getDepartmentId()) != null) {
-
-			System.out.println("Department " + departmentDto.getDepartmentId() + " already exist.");
-			return null;
-		}
+			if (departmentRepository.findDepartmentByDepartmentId(departmentDto.getDepartmentId()) != null)
+				throw new RuntimeException("Department " + departmentDto.getDepartmentId() + " already exist.");
 
 		ModelMapper modelMapper = new ModelMapper();
 		DepartmentEntity newDepartment = departmentRepository

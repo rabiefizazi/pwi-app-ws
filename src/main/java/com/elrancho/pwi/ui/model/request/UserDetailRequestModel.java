@@ -1,7 +1,5 @@
 package com.elrancho.pwi.ui.model.request;
 
-import com.elrancho.pwi.shared.dto.StoreDto;
-
 public class UserDetailRequestModel {
 
 	private long storeId;
