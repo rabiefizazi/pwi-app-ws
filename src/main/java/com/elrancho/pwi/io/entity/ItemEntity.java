@@ -42,8 +42,11 @@ public class ItemEntity implements Serializable {
 
 	@Column(name = "cost")
 	private double cost;
+	
+	@Column(name = "unitofmeasure")
+	private String unitOfMeasure;
 
-	@Column(name = "itemmaster")
+	@Column(name = "itemmaster", length = 5)
 	private boolean itemMaster;
 
 	@Column(name = "dateuploaded")
@@ -106,6 +109,14 @@ public class ItemEntity implements Serializable {
 
 	public void setCost(double cost) {
 		this.cost = cost;
+	}
+
+	public String getUnitOfMeasure() {
+		return unitOfMeasure;
+	}
+
+	public void setUnitOfMeasure(String unitOfMeasure) {
+		this.unitOfMeasure = unitOfMeasure;
 	}
 
 	public boolean isItemMaster() {

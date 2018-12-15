@@ -31,6 +31,7 @@ import com.elrancho.pwi.shared.dto.StoreDto;
 import com.elrancho.pwi.shared.dto.UserDto;
 import com.elrancho.pwi.ui.model.request.InventoryCountDetailRequestModel;
 import com.elrancho.pwi.ui.model.response.InventoryCountRest;
+import com.elrancho.pwi.ui.model.response.InventoryCountRestList;
 import com.elrancho.pwi.ui.model.response.InventoryCountSummaryRest;
 import com.elrancho.pwi.ui.model.response.InventoryCountSummaryRestList;
 import com.elrancho.pwi.ui.model.response.OperationStatusModel;
@@ -74,25 +75,31 @@ public class InventoryCountController {
 	// Get inventory count details by store by department by week end date
 	@GetMapping(path = "/{storeId}/{departmentId}/{weekEndDateString}", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	public List<InventoryCountRest> getInventoryCount(@PathVariable long storeId, @PathVariable long departmentId,
+	public InventoryCountRestList getInventoryCount(@PathVariable long storeId, @PathVariable long departmentId,
 			@PathVariable String weekEndDateString) {
 
-		List<InventoryCountRest> returnValue = new ArrayList<>();
+		InventoryCountRestList returnValue = new InventoryCountRestList();
+		
+		List<InventoryCountRest> inventoryCountRest = new ArrayList<>();
 
 		ModelMapper modelMapper = new ModelMapper();
 
 		StoreDto storeDto = storeService.getStore(storeId);
 		DepartmentDto departmentDto = departmentService.getDepartment(storeId, departmentId);
 
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		LocalDate weekEndDate = LocalDate.parse(weekEndDateString, formatter);
 
 		Iterable<InventoryCountDto> inventoryCounts = inventoryCountService.getInventoryCounts(storeDto, departmentDto,
 				weekEndDate);
 
-		for (InventoryCountDto inventoryCount : inventoryCounts)
-			returnValue.add(modelMapper.map(inventoryCount, InventoryCountRest.class));
+		for (InventoryCountDto inventoryCount : inventoryCounts) {
+			inventoryCountRest.add(modelMapper.map(inventoryCount, InventoryCountRest.class));
+		}
+			
 
+		returnValue.setInventoryCounts(inventoryCountRest);
+		
 		return returnValue;
 
 	}

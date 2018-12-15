@@ -2,16 +2,15 @@ package com.elrancho.pwi.ui.model.response;
 
 import java.time.LocalDateTime;
 
-import com.elrancho.pwi.shared.dto.StoreDto;
-
 public class ItemRest {
 
 	private long itemUPC;
 	private long vendorItem;
-	private StoreDto storeDetails;
+	private long storeId;
 	private String description;
 	private String category;
 	private double cost;
+	private String unitOfMeasure;
 	private boolean itemMaster;
 	private LocalDateTime dateUploaded;
 
@@ -31,14 +30,14 @@ public class ItemRest {
 		this.vendorItem = vendorItem;
 	}
 
-	public long getStoreDetails() {
+	public long getStoreId() {
 		// Need to return storeId instead of storeDto. Otherwise, it will go into an
 		// infinite loop.
-		return storeDetails.getStoreId();
+		return storeId;
 	}
 
-	public void setStoreDetails(StoreDto storeDetails) {
-		this.storeDetails = storeDetails;
+	public void setStoreId(long storeId) {
+		this.storeId = storeId;
 	}
 
 	public String getDescription() {
@@ -63,6 +62,14 @@ public class ItemRest {
 
 	public void setCost(double cost) {
 		this.cost = cost;
+	}
+
+	public String getUnitOfMeasure() {
+		return unitOfMeasure;
+	}
+
+	public void setUnitOfMeasure(String unitOfMeasure) {
+		this.unitOfMeasure = unitOfMeasure;
 	}
 
 	public LocalDateTime getDateUploaded() {

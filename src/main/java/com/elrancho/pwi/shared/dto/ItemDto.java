@@ -12,6 +12,7 @@ public class ItemDto {
 	private String description;
 	private String category;
 	private double cost;
+	private String unitOfMeasure;
 	private boolean itemMaster;
 	
 	private LocalDateTime dateUploaded;
@@ -72,6 +73,14 @@ public class ItemDto {
 
 	public void setCost(double cost) {
 		this.cost = cost;
+	}
+
+	public String getUnitOfMeasure() {
+		return unitOfMeasure;
+	}
+
+	public void setUnitOfMeasure(String unitOfMeasure) {
+		this.unitOfMeasure = unitOfMeasure;
 	}
 
 	public boolean isItemMaster() {

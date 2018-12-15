@@ -19,6 +19,7 @@ import com.elrancho.pwi.service.ItemService;
 import com.elrancho.pwi.shared.dto.ItemDto;
 import com.elrancho.pwi.ui.model.request.ItemDetailRequestModel;
 import com.elrancho.pwi.ui.model.response.ItemRest;
+import com.elrancho.pwi.ui.model.response.ItemRestList;
 
 @RestController
 @RequestMapping("/items")
@@ -27,18 +28,23 @@ public class ItemController {
 	@Autowired
 	ItemService itemService;
 	
-	@GetMapping(path="/{storeId}/{vendorItem}", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-	public ItemRest getItem(@PathVariable long storeId, @PathVariable long vendorItem) {
+	@GetMapping(path="/{storeId}/{vendorItem}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	public ItemRestList getItem(@PathVariable long storeId, @PathVariable long vendorItem) {
+		
 		
 		ItemDto itemDto = itemService.getItem(storeId, vendorItem);
+		List<ItemRest> itemRests = new ArrayList<>();
+		itemRests.add(new ModelMapper().map(itemDto, ItemRest.class));
 		
-		ItemRest returnV = new ModelMapper().map(itemDto, ItemRest.class);
+		ItemRestList returnValue = new ItemRestList();
+			
+		returnValue.setItems(itemRests);
 		
-		return returnV;
+		return returnValue;
 		
 	}
 	
-	@GetMapping(path="/{storeId}", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+	@GetMapping(path="/{storeId}", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public List<ItemRest> getItemsByStore(@PathVariable long storeId){
 		
 		ModelMapper modelMapper = new ModelMapper();
@@ -52,7 +58,7 @@ public class ItemController {
 		return returnValue;
 	}
 	
-	@GetMapping( path="/", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+	@GetMapping( path="/", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public List<ItemRest> getItemsByStore(){
 		
 		ModelMapper modelMapper = new ModelMapper();
@@ -66,7 +72,7 @@ public class ItemController {
 		return returnValue;
 	}
 	
-	@PostMapping(path="/new", consumes= {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE}, produces= {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+	@PostMapping(path="/new", consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ItemRest createItem(@RequestBody ItemDetailRequestModel itemDetail) {
 		
 		ModelMapper modelMapper = new ModelMapper();
@@ -78,7 +84,7 @@ public class ItemController {
 		return returnValue;
 	}
 	
-	@PutMapping(path="/update", consumes= {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE}, produces= {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+	@PutMapping(path="/update", consumes= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
 	public ItemRest updateItem(@RequestBody ItemDetailRequestModel itemDetail) {
 		
 		ModelMapper modelMapper = new ModelMapper();
@@ -94,7 +100,7 @@ public class ItemController {
 		return returnValue;
 	}
 	
-	@DeleteMapping(path="/{storeId}/{vendorItem}", produces= {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+	@DeleteMapping(path="/{storeId}/{vendorItem}", produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ItemRest deleteItem(@PathVariable long storeId, @PathVariable long vendorItem) {
 		
 		

@@ -3,47 +3,51 @@ package com.elrancho.pwi.ui.model.response;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.elrancho.pwi.shared.dto.DepartmentDto;
-import com.elrancho.pwi.shared.dto.ItemDto;
-import com.elrancho.pwi.shared.dto.StoreDto;
-import com.elrancho.pwi.shared.dto.UserDto;
-
 public class InventoryCountRest {
 
-	private StoreDto storeDetails;
-	private DepartmentDto departmentDetails;
-	private UserDto userDetails;
-	private ItemDto itemDetails;
+	private long storeId;
+	private long departmentId;
+	private String userId;
+	private long vendorItem;
+	private String itemDescription;
 	private double cost;
 	private double quantity;
 	private LocalDate weekEndDate;
 	private LocalDateTime dateUpdated;
 	private boolean itemMaster;
 	
+
+
+	public long getStoreId() {
+		return storeId;
+	}
+	public void setStoreId(long storeId) {
+		this.storeId = storeId;
+	}
+	public long getDepartmentId() {
+		return departmentId;
+	}
+	public void setDepartmentId(long departmentId) {
+		this.departmentId = departmentId;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public long getVendorItem() {
+		return vendorItem;
+	}
+	public void setVendorItem(long vendorItem) {
+		this.vendorItem = vendorItem;
+	}
 	
-	public long getStoreDetails() {
-		return storeDetails.getStoreId();
+	public String getItemDescription() {
+		return itemDescription;
 	}
-	public void setStoreDetails(StoreDto storeDetails) {
-		this.storeDetails = storeDetails;
-	}
-	public long getDepartmentDetails() {
-		return departmentDetails.getDepartmentId();
-	}
-	public void setDepartmentDetails(DepartmentDto departmentDetails) {
-		this.departmentDetails = departmentDetails;
-	}
-	public String getUserDetails() {
-		return userDetails.getUsername();
-	}
-	public void setUserDetails(UserDto userDetails) {
-		this.userDetails = userDetails;
-	}
-	public long getItemDetails() {
-		return itemDetails.getVendorItem();
-	}
-	public void setItemDetails(ItemDto itemDetails) {
-		this.itemDetails = itemDetails;
+	public void setItemDescription(String itemDescription) {
+		this.itemDescription = itemDescription;
 	}
 	public double getCost() {
 		return cost;
