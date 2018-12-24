@@ -62,7 +62,7 @@ public class InventoryCountController {
 		DepartmentDto departmentDto = departmentService.getDepartment(storeId, departmentId);
 		ItemDto itemDto = itemService.getItem(storeId, vendorItem);
 
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		LocalDate weekEndDate = LocalDate.parse(weekEndDateString, formatter);
 
 		InventoryCountDto inventoryCountDto = inventoryCountService.getInventoryCount(storeDto, departmentDto,
