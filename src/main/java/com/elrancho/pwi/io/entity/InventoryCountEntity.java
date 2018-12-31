@@ -33,9 +33,8 @@ public class InventoryCountEntity implements Serializable {
 	@JoinColumn(name = "departmentid")
 	private DepartmentEntity departmentDetails;
 
-	@ManyToOne
-	@JoinColumn(name = "username")
-	private UserEntity userDetails;
+	@Column(name = "username" )
+	private String username;
 
 	@Column(name = "vendoritem")
 	private long vendorItem;
@@ -90,12 +89,12 @@ public class InventoryCountEntity implements Serializable {
 		this.departmentDetails = departmentDetails;
 	}
 
-	public UserEntity getUserDetails() {
-		return userDetails;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setUserDetails(UserEntity userDetails) {
-		this.userDetails = userDetails;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public ItemEntity getItemDetails() {

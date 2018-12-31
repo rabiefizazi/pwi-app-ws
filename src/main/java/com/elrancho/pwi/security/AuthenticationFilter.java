@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -41,13 +42,23 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 			UserLoginRequestModel creds = new ObjectMapper().readValue(req.getInputStream(),
 					UserLoginRequestModel.class);
 
-			return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(creds.getUsername(),
-					creds.getPassword(), new ArrayList<>()));
+			return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(creds.getUsername(), creds.getPassword(), new ArrayList<>()));			
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	@Override
+	protected void unsuccessfulAuthentication(HttpServletRequest request,
+			HttpServletResponse response, AuthenticationException failed)
+			throws IOException, ServletException {
+		
+		String msg = failed.getMessage();
+		response.setStatus(HttpStatus.SC_UNAUTHORIZED);
+				
+		response.addHeader("failedMessage", msg);
+	}
+	
 	@Override
 	protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
 			Authentication auth) throws IOException, ServletException {

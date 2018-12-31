@@ -1,5 +1,7 @@
 package com.elrancho.pwi.controller;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -131,6 +133,12 @@ public class InventoryCountController {
 
 			else
 				totalAmount = currentAmount;
+			
+			//round to 2 decimals only.
+			BigDecimal bd = new BigDecimal(Double.toString(totalAmount));
+			bd = bd.setScale(2, RoundingMode.HALF_UP);
+			totalAmount = bd.doubleValue();
+			
 			totalAmountMap.put(inventoryCount.getWeekEndDate(), totalAmount);
 		}
 
@@ -141,7 +149,8 @@ public class InventoryCountController {
 			inventoryCountSummaryRest.setStoreId(storeId);
 			inventoryCountSummaryRest.setDepartmentId(departmentId);
 			inventoryCountSummaryRest.setWeekEndDate(entry.getKey());
-			inventoryCountSummaryRest.setTotalInventory(entry.getValue());
+			inventoryCountSummaryRest.setTotalInventory((entry.getValue()));
+			
 			inventoryCountSummaryRests.add(inventoryCountSummaryRest);
 		}
 		
@@ -171,7 +180,7 @@ public class InventoryCountController {
 		inventoryCountDto.setStoreDetails(storeDto);
 		inventoryCountDto.setDepartmentDetails(departmentDto);
 		inventoryCountDto.setItemDetails(itemDto);
-		inventoryCountDto.setUserDetails(userDto);
+		inventoryCountDto.setUsername(userDto.getUsername());
 		inventoryCountDto.setCost(inventoryCountDetail.getCost());
 		inventoryCountDto.setQuantity(inventoryCountDetail.getQuantity());
 
@@ -186,13 +195,32 @@ public class InventoryCountController {
 	@PutMapping(path = "/update", consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
 					MediaType.APPLICATION_XML_VALUE })
-	public InventoryCountRest updateInventoryCount(@RequestBody InventoryCountDetailRequestModel inventoryCountDetail) {
+	public OperationStatusModel updateInventoryCount(@RequestBody InventoryCountDetailRequestModel inventoryCountDetail) {
 
-		ModelMapper modelMapper = new ModelMapper();
-		InventoryCountDto newInventoryCount = inventoryCountService
-				.updateInventoryCount(modelMapper.map(inventoryCountDetail, InventoryCountDto.class));
+		OperationStatusModel operationStatusModel = new OperationStatusModel();
+		operationStatusModel.setOperationName(RequestOperationName.UPDATE_INVENTORY_COUNT.name());
+		operationStatusModel.setOperationResult(RequestOperationStatus.SUCCESS.name());
 
-		return modelMapper.map(newInventoryCount, InventoryCountRest.class);
+		StoreDto storeDto = storeService.getStore(inventoryCountDetail.getStoreId());
+		DepartmentDto departmentDto = departmentService.getDepartment(inventoryCountDetail.getStoreId(),
+				inventoryCountDetail.getDepartmentId());
+		ItemDto itemDto = itemService.getItem(inventoryCountDetail.getStoreId(), inventoryCountDetail.getVendorItem());
+		UserDto userDto = userService.getUserByUserId(inventoryCountDetail.getUserId());
+
+		InventoryCountDto inventoryCountDto = new InventoryCountDto();
+		inventoryCountDto.setStoreDetails(storeDto);
+		inventoryCountDto.setDepartmentDetails(departmentDto);
+		inventoryCountDto.setItemDetails(itemDto);
+		inventoryCountDto.setUsername(userDto.getUsername());
+		inventoryCountDto.setCost(inventoryCountDetail.getCost());
+		inventoryCountDto.setQuantity(inventoryCountDetail.getQuantity());
+
+		InventoryCountDto updateInventoryCount = inventoryCountService.updateInventoryCount(inventoryCountDto);
+
+		if (updateInventoryCount == null)
+			operationStatusModel.setOperationResult(RequestOperationStatus.ERROR.name());
+
+		return operationStatusModel;
 
 	}
 

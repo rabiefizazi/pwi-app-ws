@@ -1,7 +1,6 @@
 package com.elrancho.pwi.shared.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class UserDto {
 
@@ -19,7 +18,6 @@ public class UserDto {
 	private String confirmationCode;
 	private LocalDateTime confirmationtTime;
 	private LocalDateTime dateUpdated;
-	private List<InventoryCountDto> inventoryCounts;
 
 	public String getUserIdString() {
 		return userIdString;
@@ -123,14 +121,6 @@ public class UserDto {
 
 	public void setDateUpdated(LocalDateTime dateUpdated) {
 		this.dateUpdated = dateUpdated;
-	}
-
-	public List<InventoryCountDto> getInventoryCounts() {
-		return inventoryCounts;
-	}
-
-	public void setInventoryCounts(List<InventoryCountDto> inventoryCounts) {
-		this.inventoryCounts = inventoryCounts;
 	}
 
 }

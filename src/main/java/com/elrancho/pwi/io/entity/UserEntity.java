@@ -2,15 +2,13 @@ package com.elrancho.pwi.io.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
-import javax.persistence.CascadeType;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity(name = "users")
 public class UserEntity implements Serializable {
@@ -27,7 +25,7 @@ public class UserEntity implements Serializable {
 	@Column(name = "enabled")
 	private boolean enabled;
 
-	@Column(name = "email", length = 120)
+	@Column(name = "email", length = 120, unique = true)
 	private String email;
 
 	@Id
@@ -57,9 +55,6 @@ public class UserEntity implements Serializable {
 
 	@Column(name = "dateUpdated")
 	private LocalDateTime dateUpdated;
-
-	@OneToMany(mappedBy = "userDetails", cascade = CascadeType.REMOVE)
-	private List<InventoryCountEntity> inventoryCounts;
 
 	public String getUserIdString() {
 		return userIdString;
@@ -163,14 +158,6 @@ public class UserEntity implements Serializable {
 
 	public void setDateUpdated(LocalDateTime dateUpdated) {
 		this.dateUpdated = dateUpdated;
-	}
-
-	public List<InventoryCountEntity> getInventoryCounts() {
-		return inventoryCounts;
-	}
-
-	public void setInventoryCounts(List<InventoryCountEntity> inventoryCounts) {
-		this.inventoryCounts = inventoryCounts;
 	}
 
 }

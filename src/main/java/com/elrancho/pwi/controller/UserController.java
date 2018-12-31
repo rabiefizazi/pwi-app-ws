@@ -6,7 +6,6 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
-import org.springframework.http.HttpMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -184,7 +183,7 @@ public class UserController {
 	 * http://localhost:8080/perishablesWeeklyInventory/users/email-verification?
 	 * token=sdfsdf
 	 **/
-	@CrossOrigin(origins = "http://ec2-52-72-212-233.compute-1.amazonaws.com:8080")
+	@CrossOrigin(origins = "http://ec2-34-204-11-242.compute-1.amazonaws.com:8080")
 	@GetMapping(path = "/email-verification", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
 	public OperationStatusModel verificationEmail(@RequestParam(value = "token") String token) {
@@ -202,7 +201,7 @@ public class UserController {
 		return returnValue;
 	}
 
-	@CrossOrigin(origins = "http://ec2-52-72-212-233.compute-1.amazonaws.com:8080")
+	@CrossOrigin(origins = "http://ec2-34-204-11-242.compute-1.amazonaws.com:8080")
 	@PostMapping(path = "/password-reset-request", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE,
 					MediaType.APPLICATION_XML_VALUE })
@@ -221,7 +220,7 @@ public class UserController {
 		return returnValue;
 	}
 
-	@CrossOrigin(origins = "http://ec2-52-72-212-233.compute-1.amazonaws.com:8080")
+	@CrossOrigin(origins = "http://ec2-34-204-11-242.compute-1.amazonaws.com:8080")
 	@PostMapping(path = "/password-reset", consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
 	public OperationStatusModel resetPassword(@RequestBody PasswordResetModel passwordResetModel) {

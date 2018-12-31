@@ -9,7 +9,7 @@ public class InventoryCountDto {
 	private String transactionIdString;
 	private StoreDto storeDetails;
 	private DepartmentDto departmentDetails;
-	private UserDto userDetails;
+	private String username;
 	public double vendorItem;
 	private ItemDto itemDetails;
 	private double cost;
@@ -49,12 +49,12 @@ public class InventoryCountDto {
 		this.departmentDetails = departmentDetails;
 	}
 
-	public UserDto getUserDetails() {
-		return userDetails;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setUserDetails(UserDto userDetails) {
-		this.userDetails = userDetails;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public ItemDto getItemDetails() {
@@ -68,7 +68,7 @@ public class InventoryCountDto {
 	public void setVendorItem(double vendorItem) {
 		this.vendorItem = vendorItem;
 	}
-	
+
 	public void setItemDetails(ItemDto itemDetails) {
 		this.itemDetails = itemDetails;
 	}
@@ -89,11 +89,11 @@ public class InventoryCountDto {
 		this.quantity = quantity;
 	}
 
-	public LocalDate getWeekEndDate() {		
+	public LocalDate getWeekEndDate() {
 		return weekEndDate;
 	}
 
-	public void setWeekEndDate(LocalDate weekEndDate) {	
+	public void setWeekEndDate(LocalDate weekEndDate) {
 		this.weekEndDate = weekEndDate;
 	}
 
