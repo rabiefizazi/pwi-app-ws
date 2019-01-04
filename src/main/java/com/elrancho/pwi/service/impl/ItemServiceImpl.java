@@ -39,7 +39,8 @@ public class ItemServiceImpl implements ItemService {
 		ItemEntity itemEntity = itemRepository.findItemByStoreDetailsAndVendorItem(storeEntity, vendorItem);
 
 		if (itemEntity == null)
-			throw new RuntimeException("Item " + vendorItem + " not found.");
+			return null;
+		
 
 		return new ModelMapper().map(itemEntity, ItemDto.class);
 	}

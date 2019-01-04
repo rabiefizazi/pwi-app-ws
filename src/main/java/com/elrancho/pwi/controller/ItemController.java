@@ -3,6 +3,8 @@ package com.elrancho.pwi.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.elrancho.pwi.service.ItemService;
+import com.elrancho.pwi.service.StoreService;
 import com.elrancho.pwi.shared.dto.ItemDto;
 import com.elrancho.pwi.ui.model.request.ItemDetailRequestModel;
 import com.elrancho.pwi.ui.model.response.ItemRest;
@@ -28,82 +31,108 @@ public class ItemController {
 	@Autowired
 	ItemService itemService;
 	
-	@GetMapping(path="/{storeId}/{vendorItem}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-	public ItemRestList getItem(@PathVariable long storeId, @PathVariable long vendorItem) {
-		
-		
-		ItemDto itemDto = itemService.getItem(storeId, vendorItem);
-		List<ItemRest> itemRests = new ArrayList<>();
-		itemRests.add(new ModelMapper().map(itemDto, ItemRest.class));
-		
-		ItemRestList returnValue = new ItemRestList();
-			
-		returnValue.setItems(itemRests);
-		
-		return returnValue;
-		
+	@Autowired
+	StoreService storeService;
+
+	@GetMapping(path = "/{storeId}/{vendorItem}", produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
+	public ItemRestList getItem(@PathVariable long storeId, @PathVariable long vendorItem,
+			HttpServletResponse response) {
+
+		if (itemService.getItem(storeId, vendorItem) == null) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			// throw new RuntimeException("Item " + vendorItem + " not found.");
+			return null;
+		} else {
+			ItemDto itemDto = itemService.getItem(storeId, vendorItem);
+			List<ItemRest> itemRests = new ArrayList<>();
+			itemRests.add(new ModelMapper().map(itemDto, ItemRest.class));
+
+			ItemRestList returnValue = new ItemRestList();
+
+			returnValue.setItems(itemRests);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+			return returnValue;
+		}
+
 	}
-	
-	@GetMapping(path="/{storeId}", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
-	public List<ItemRest> getItemsByStore(@PathVariable long storeId){
-		
+
+	@GetMapping(path = "/{storeId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public List<ItemRest> getItemsByStore(@PathVariable long storeId) {
+
 		ModelMapper modelMapper = new ModelMapper();
 		List<ItemRest> returnValue = new ArrayList<>();
-		
+
 		Iterable<ItemDto> items = itemService.getItemsByStore(storeId);
-		
-		for(ItemDto item:items) {
-			returnValue.add(modelMapper.map(item,ItemRest.class));
+
+		for (ItemDto item : items) {
+			returnValue.add(modelMapper.map(item, ItemRest.class));
 		}
 		return returnValue;
 	}
-	
-	@GetMapping( path="/", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
-	public List<ItemRest> getItemsByStore(){
-		
+
+	@GetMapping(path = "/", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public List<ItemRest> getItemsByStore() {
+
 		ModelMapper modelMapper = new ModelMapper();
 		List<ItemRest> returnValue = new ArrayList<>();
-		
+
 		Iterable<ItemDto> items = itemService.getItems();
-		
-		for(ItemDto item:items) {
-			returnValue.add(modelMapper.map(item,ItemRest.class));
+
+		for (ItemDto item : items) {
+			returnValue.add(modelMapper.map(item, ItemRest.class));
 		}
 		return returnValue;
 	}
-	
-	@PostMapping(path="/new", consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+
+	@PostMapping(path = "/new", consumes = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
+					MediaType.APPLICATION_XML_VALUE })
 	public ItemRest createItem(@RequestBody ItemDetailRequestModel itemDetail) {
+
 		
 		ModelMapper modelMapper = new ModelMapper();
-		ItemDto itemDto = modelMapper.map(itemDetail, ItemDto.class);
+
+		ItemDto itemDto = new ItemDto();
+		
+		itemDto.setItemUPC(itemDetail.getItemUPC());
+		itemDto.setVendorItem(itemDetail.getVendorItem());
+		itemDto.setStoreDetails(storeService.getStore(itemDetail.getStoreId()));
+		itemDto.setDescription(itemDetail.getDescription());
+		itemDto.setCost(itemDetail.getCost());
+		itemDto.setUnitOfMeasure(itemDetail.getUnitOfMeasure());
+		itemDto.setItemMaster(itemDetail.isItemMaster());;
+		itemDto.setCategory(itemDetail.getCategory());
 		
 		ItemDto newItem = itemService.createItem(itemDto);
-		
-		ItemRest returnValue = modelMapper.map(newItem,ItemRest.class);
+
+		ItemRest returnValue = modelMapper.map(newItem, ItemRest.class);
 		return returnValue;
 	}
-	
-	@PutMapping(path="/update", consumes= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE}, produces= {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
+
+	@PutMapping(path = "/update", consumes = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
+					MediaType.APPLICATION_XML_VALUE })
 	public ItemRest updateItem(@RequestBody ItemDetailRequestModel itemDetail) {
-		
+
 		ModelMapper modelMapper = new ModelMapper();
-		
+
 		ItemRest returnValue = new ItemRest();
-		
-		ItemDto itemDto = modelMapper.map(itemDetail,ItemDto.class);
-		
+
+		ItemDto itemDto = modelMapper.map(itemDetail, ItemDto.class);
+
 		ItemDto updatedItem = itemService.updateItem(itemDto);
-		
-		returnValue =modelMapper.map(updatedItem,ItemRest.class);
-		
+
+		returnValue = modelMapper.map(updatedItem, ItemRest.class);
+
 		return returnValue;
 	}
-	
-	@DeleteMapping(path="/{storeId}/{vendorItem}", produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+
+	@DeleteMapping(path = "/{storeId}/{vendorItem}", produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
 	public ItemRest deleteItem(@PathVariable long storeId, @PathVariable long vendorItem) {
-		
-		
+
 		return new ModelMapper().map(itemService.deleteItem(storeId, vendorItem), ItemRest.class);
 	}
 }

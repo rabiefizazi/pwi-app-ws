@@ -95,8 +95,11 @@ public class InventoryCountController {
 		Iterable<InventoryCountDto> inventoryCounts = inventoryCountService.getInventoryCounts(storeDto, departmentDto,
 				weekEndDate);
 
+		InventoryCountRest inCountRest = new InventoryCountRest();
 		for (InventoryCountDto inventoryCount : inventoryCounts) {
-			inventoryCountRest.add(modelMapper.map(inventoryCount, InventoryCountRest.class));
+			inCountRest = modelMapper.map(inventoryCount, InventoryCountRest.class);
+			inCountRest.setUnitOfMeasure((itemService.getItem(inCountRest.getStoreId(), inCountRest.getVendorItem())).getUnitOfMeasure());
+			inventoryCountRest.add(inCountRest);
 		}
 			
 

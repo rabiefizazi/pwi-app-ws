@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDto createUser(UserDto userDto) {
+	public String createUser(UserDto userDto) {
 
 		ModelMapper modelMapper = new ModelMapper();
 
@@ -113,10 +113,14 @@ public class UserServiceImpl implements UserService {
 			if (!userEntity.isEmailConfirmationStatus())
 				userRepository.delete(userEntity);
 			else
-				return null;
+				return "User already exist";
+			;
 		}
-
-		UserDto returnValue = new UserDto();
+		
+		userEntity = userRepository.findUserByEmail(userDto.getEmail());
+		if (userEntity != null) {
+				return "Email already associated with another account";
+		}
 
 		userEntity = modelMapper.map(userDto, UserEntity.class);
 
@@ -129,12 +133,12 @@ public class UserServiceImpl implements UserService {
 
 		UserEntity newUser = userRepository.save(userEntity);
 
-		returnValue = modelMapper.map(newUser, UserDto.class);
+		// returnValue = modelMapper.map(newUser, UserDto.class);
 
 		// Send an email message to user to verify their email address
-		new AmazonSES().verifyEmail(returnValue);
+		new AmazonSES().verifyEmail(modelMapper.map(newUser, UserDto.class));
 
-		return returnValue;
+		return "Added successfully";
 	}
 
 	@Override

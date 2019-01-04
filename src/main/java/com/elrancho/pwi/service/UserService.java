@@ -13,7 +13,7 @@ public interface UserService extends UserDetailsService{
 	public List<UserDto> getUsers();
 	public List<UserDto> getUserByStore(long storeId);
 	
-	public UserDto createUser(UserDto userDto);
+	public String createUser(UserDto userDto);
 	public UserDto updateUser(UserDto userDto);
 	public void deleteUser(String userId);
 	public boolean verifyEmailToken(String token);

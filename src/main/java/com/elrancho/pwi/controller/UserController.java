@@ -28,6 +28,7 @@ import com.elrancho.pwi.ui.model.request.PasswordResetModel;
 import com.elrancho.pwi.ui.model.request.PasswordResetRequestModel;
 import com.elrancho.pwi.ui.model.request.UserDetailRequestModel;
 import com.elrancho.pwi.ui.model.response.OperationStatusModel;
+import com.elrancho.pwi.ui.model.response.RequestOperationMessage;
 import com.elrancho.pwi.ui.model.response.RequestOperationName;
 import com.elrancho.pwi.ui.model.response.RequestOperationStatus;
 import com.elrancho.pwi.ui.model.response.UserRest;
@@ -110,7 +111,6 @@ public class UserController {
 					MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<?> createUser(@RequestBody UserDetailRequestModel userDetail) {
 
-
 		UserDto newUser = new UserDto();
 
 		newUser.setUsername(userDetail.getUsername());
@@ -129,22 +129,29 @@ public class UserController {
 		}
 		newUser.setStoreDetails(storeDto);
 
-		UserDto userDto = userService.createUser(newUser);
+		String additionStatus = userService.createUser(newUser);
 
-		if (userDto != null) {
-			
-			OperationStatusModel operationStatus = new OperationStatusModel();
-			operationStatus.setOperationName(RequestOperationName.CREATE_NEW_USER.name().toString());
-			operationStatus.setOperationResult(RequestOperationStatus.SUCCESS.name().toString());
-			return new ResponseEntity<>(operationStatus, HttpStatus.CREATED);
-		} else {
-			OperationStatusModel operationStatus = new OperationStatusModel();
+
+		OperationStatusModel operationStatus = new OperationStatusModel();
+		
+		if(additionStatus.equals("User already exist")){
 			operationStatus.setOperationName(RequestOperationName.CREATE_NEW_USER.name().toString());
 			operationStatus.setOperationResult(RequestOperationStatus.ERROR.name().toString());
+			operationStatus.setOperationMessage(RequestOperationMessage.USER_ALREADY_EXIST.name().toString());
 			return new ResponseEntity<>(operationStatus, HttpStatus.UNPROCESSABLE_ENTITY);
 		}
+		else if(additionStatus.equals("Email already associated with another account")){
+			operationStatus.setOperationName(RequestOperationName.CREATE_NEW_USER.name().toString());
+			operationStatus.setOperationResult(RequestOperationStatus.ERROR.name().toString());
+			operationStatus.setOperationMessage(RequestOperationMessage.EMAIL_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT.name().toString());
+			return new ResponseEntity<>(operationStatus, HttpStatus.FOUND);
+		} else{
+			operationStatus.setOperationName(RequestOperationName.CREATE_NEW_USER.name().toString());
+			operationStatus.setOperationResult(RequestOperationStatus.SUCCESS.name().toString());
+			operationStatus.setOperationMessage(RequestOperationMessage.USER_CREATED_SUCCESSFULLY.name().toString());
+			return new ResponseEntity<>(operationStatus, HttpStatus.CREATED);
 			
-
+		} 
 	}
 
 	@PutMapping(path = "/update", consumes = { MediaType.APPLICATION_XML_VALUE,
