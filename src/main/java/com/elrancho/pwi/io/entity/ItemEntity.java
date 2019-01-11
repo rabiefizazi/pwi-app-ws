@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -29,7 +30,7 @@ public class ItemEntity implements Serializable {
 	@Column(name = "vendoritem")
 	private long vendorItem;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@Id
 	@JoinColumn(name = "storeid", referencedColumnName = "storeid")
 	private StoreEntity storeDetails;
@@ -52,7 +53,7 @@ public class ItemEntity implements Serializable {
 	@Column(name = "dateuploaded")
 	private LocalDateTime dateUploaded;
 
-	@OneToMany(mappedBy = "itemDetails", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "itemDetails", cascade = CascadeType.REMOVE,fetch=FetchType.LAZY)
 	private List<InventoryCountEntity> inventoryCounts;
 
 	public String getItemIdString() {

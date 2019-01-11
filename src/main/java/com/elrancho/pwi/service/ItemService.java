@@ -15,4 +15,5 @@ public interface ItemService {
 	public ItemDto createItem(ItemDto itemDto);
 	public ItemDto updateItem(ItemDto itemDto);
 	public ItemDto deleteItem(long storeId, long vendorItem);
+	public void uploadItemListCsv(List<ItemDto> itemDto);
 }

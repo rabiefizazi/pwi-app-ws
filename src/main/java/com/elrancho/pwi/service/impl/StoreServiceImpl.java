@@ -24,7 +24,7 @@ public class StoreServiceImpl implements StoreService {
 		StoreEntity storeEntity = storeRepository.findStoreByStoreId(storeId);
 
 		if (storeEntity == null)
-			throw new RuntimeException("Item " + storeId + " not found.");
+			throw new RuntimeException("Store " + storeId + " not found.");
 
 		ModelMapper modelMapper = new ModelMapper();
 
@@ -38,7 +38,7 @@ public class StoreServiceImpl implements StoreService {
 
 		if (storeRepository.findAll() == null) {
 
-			System.out.println("Not items found.");
+			System.out.println("Not stores found.");
 			return null;
 		}
 

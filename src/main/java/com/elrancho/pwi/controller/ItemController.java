@@ -1,5 +1,7 @@
 package com.elrancho.pwi.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +17,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.elrancho.pwi.service.ItemService;
 import com.elrancho.pwi.service.StoreService;
+import com.elrancho.pwi.shared.Utils;
 import com.elrancho.pwi.shared.dto.ItemDto;
 import com.elrancho.pwi.ui.model.request.ItemDetailRequestModel;
 import com.elrancho.pwi.ui.model.response.ItemRest;
@@ -135,4 +140,32 @@ public class ItemController {
 
 		return new ModelMapper().map(itemService.deleteItem(storeId, vendorItem), ItemRest.class);
 	}
+	
+	//upload itemList CSV file
+	@PostMapping(value = "/upload", consumes = "multipart/form-data")
+    public void uploadItemList(@RequestParam("file") MultipartFile file) throws IOException {
+		
+		List<ItemDetailRequestModel> ItemList = Utils.uploadItemListCsv(ItemDetailRequestModel.class, file.getInputStream());
+		
+		Iterable<ItemDetailRequestModel> items = ItemList;
+		
+		List<ItemDto> itemDtos = new ArrayList<>();
+		
+		for(ItemDetailRequestModel itemDetail:items) {
+
+			ItemDto itemDto = new ItemDto();
+			itemDto.setItemUPC(itemDetail.getItemUPC());
+			itemDto.setVendorItem(itemDetail.getVendorItem());
+			itemDto.setStoreDetails(storeService.getStore(itemDetail.getStoreId()));
+			itemDto.setDescription(itemDetail.getDescription());
+			itemDto.setCost(itemDetail.getCost());
+			itemDto.setUnitOfMeasure(itemDetail.getUnitOfMeasure());
+			itemDto.setItemMaster(true);;
+			itemDto.setCategory(itemDetail.getCategory());
+			
+			itemDtos.add(itemDto);			
+		}
+		
+        itemService.uploadItemListCsv(itemDtos);
+    }
 }

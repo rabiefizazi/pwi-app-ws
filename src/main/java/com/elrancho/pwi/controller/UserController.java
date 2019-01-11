@@ -190,7 +190,7 @@ public class UserController {
 	 * http://localhost:8080/perishablesWeeklyInventory/users/email-verification?
 	 * token=sdfsdf
 	 **/
-	@CrossOrigin(origins = "http://ec2-34-204-11-242.compute-1.amazonaws.com:8080")
+	@CrossOrigin(origins = "http://ec2-54-163-206-204.compute-1.amazonaws.com:8080")
 	@GetMapping(path = "/email-verification", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
 	public OperationStatusModel verificationEmail(@RequestParam(value = "token") String token) {
@@ -208,7 +208,7 @@ public class UserController {
 		return returnValue;
 	}
 
-	@CrossOrigin(origins = "http://ec2-34-204-11-242.compute-1.amazonaws.com:8080")
+	@CrossOrigin(origins = "http://ec2-54-163-206-204.compute-1.amazonaws.com:8080")
 	@PostMapping(path = "/password-reset-request", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE,
 					MediaType.APPLICATION_XML_VALUE })
@@ -227,7 +227,7 @@ public class UserController {
 		return returnValue;
 	}
 
-	@CrossOrigin(origins = "http://ec2-34-204-11-242.compute-1.amazonaws.com:8080")
+	@CrossOrigin(origins = "http://ec2-54-163-206-204.compute-1.amazonaws.com:8080")
 	@PostMapping(path = "/password-reset", consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
 	public OperationStatusModel resetPassword(@RequestBody PasswordResetModel passwordResetModel) {

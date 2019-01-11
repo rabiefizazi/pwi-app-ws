@@ -1,16 +1,32 @@
 package com.elrancho.pwi.ui.model.request;
 
-import com.elrancho.pwi.shared.dto.StoreDto;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.opencsv.bean.CsvBindByName;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ItemDetailRequestModel {
 
+	@CsvBindByName(column ="Item UPC")
 	private long itemUPC;
+	
+	@CsvBindByName(column ="Vendor-Item")
 	private long vendorItem;
+	
+	@CsvBindByName(column ="Store ID")
 	private long storeId;
+	
+	@CsvBindByName(column ="Item Description")
 	private String description;
+	
+	@CsvBindByName(column ="Category")
 	private String category;
+	
+	@CsvBindByName(column ="Item Cost")
 	private double cost;
+	
+	@CsvBindByName(column ="Units")
 	private String unitOfMeasure;
+	
 	private boolean itemMaster;
 
 	public long getItemUPC() {

@@ -16,4 +16,6 @@ public interface ItemRepository extends CrudRepository<ItemEntity, Long> {
 	public List<ItemEntity> findItemByStoreDetails(StoreEntity storeEntity);
 	
 	public ItemEntity findItemByVendorItem(long vendorItem);
+	
+	//void saveAll(List<ItemEntity> users);
 }

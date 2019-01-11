@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -23,14 +24,14 @@ public class DepartmentEntity implements Serializable {
 	@Column(name = "description", length = 50)
 	private String description;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "storeid")
 	private  StoreEntity storeDetails;
 
 	@Column(name = "type", length = 25)
 	private String type;
 	
-	@OneToMany(mappedBy="departmentDetails", cascade=CascadeType.REMOVE)
+	@OneToMany(mappedBy="departmentDetails", cascade=CascadeType.REMOVE, fetch=FetchType.LAZY)
 	private List<InventoryCountEntity> inventoryCounts;
 
 	public long getDepartmentId() {

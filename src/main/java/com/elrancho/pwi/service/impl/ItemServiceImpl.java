@@ -129,5 +129,22 @@ public class ItemServiceImpl implements ItemService {
 
 		return returnValue;
 	}
+	
+	@Override
+	public void uploadItemListCsv(List<ItemDto> itemDtos) {
+		
+		List<ItemEntity> itemEntities = new ArrayList<>();
+		ModelMapper modelMapper=new ModelMapper();
+		List<ItemDto> items= itemDtos;
+		
+		for(ItemDto itemDto:items) {
+			ItemEntity itemEntity= modelMapper.map(itemDto, ItemEntity.class);
+			itemEntity.setItemIdString(utils.generateItemId(30));
+			itemEntity.setDateUploaded(utils.getTodaysDate());
+			itemEntities.add(itemEntity);
+		}
+		
+		itemRepository.saveAll(itemEntities);
+	}
 
 }

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -25,11 +26,11 @@ public class InventoryCountEntity implements Serializable {
 	@Column(name = "transactionidstring", length = 50)
 	private String transactionIdString;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "storeid")
 	private StoreEntity storeDetails;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "departmentid")
 	private DepartmentEntity departmentDetails;
 
@@ -39,7 +40,7 @@ public class InventoryCountEntity implements Serializable {
 	@Column(name = "vendoritem")
 	private long vendorItem;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumns({
 			@JoinColumn(name = "vendoritem", referencedColumnName = "vendoritem", insertable = false, updatable = false),
 			@JoinColumn(name = "storeid", referencedColumnName = "storeid", insertable = false, updatable = false) })

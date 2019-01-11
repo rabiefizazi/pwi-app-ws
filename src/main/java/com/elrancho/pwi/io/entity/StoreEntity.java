@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
@@ -25,16 +26,16 @@ public class StoreEntity implements Serializable {
 	@Column(name = "district", length = 25)
 	private String district;
 
-	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	private List<DepartmentEntity> departments;
 
-	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	private List<UserEntity> users;
 
-	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	private List<ItemEntity> items;
 
-	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	private List<InventoryCountEntity> inventoryCounts;
 
 	public long getStoreId() {
