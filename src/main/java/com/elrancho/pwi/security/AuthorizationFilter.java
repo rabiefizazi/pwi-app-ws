@@ -26,11 +26,18 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 			throws IOException, ServletException {
 
 		String header = req.getHeader(SecurityConstants.HEADER_STRING);
-
+		
+		
+			
 		if (header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-
-			chain.doFilter(req, res);
-			return;
+			
+			//if the url requests to download the inventory data, then the token will be passed as request parameter, otherwise will be in the header
+			String path = req.getRequestURI();//.substring(request.getContextPath().length());		
+			if(path.endsWith("/inventory.csv") && req.getParameter(SecurityConstants.TOKEN_REQUEST_PARAM).equals("")) {
+				chain.doFilter(req, res);
+				return;
+			}
+			
 		}
 
 		UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
@@ -40,8 +47,16 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 
 	public UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
 
-		String token = request.getHeader(SecurityConstants.HEADER_STRING);
+		String token;
 
+		String path = request.getRequestURI();//.substring(request.getContextPath().length());
+		
+		//if the url requests to download the inventory data, then the token will be passed as request parameter, otherwise will be in the header
+		if(path.endsWith("/inventory.csv"))
+			token = SecurityConstants.TOKEN_PREFIX+request.getParameter(SecurityConstants.TOKEN_REQUEST_PARAM);
+		else 
+			token = request.getHeader(SecurityConstants.HEADER_STRING);
+		
 		if (token != null) {
 
 			token = token.replace(SecurityConstants.TOKEN_PREFIX, "");

@@ -13,7 +13,7 @@ public interface DepartmentRepository extends CrudRepository<DepartmentEntity, L
 
 	public DepartmentEntity findDepartmentByDepartmentId(long departmentId);
 
-	public DepartmentEntity findDepartmentByStoreDetailsAndDepartmentId(StoreEntity storeEntity, long departmentId);
+	public DepartmentEntity findDepartmentByStoreIdAndDepartmentId(long storeId, long departmentId);
 
-	public List<DepartmentEntity> findDepartmentByStoreDetails(StoreEntity storeEntity);
+	public List<DepartmentEntity> findDepartmentByStoreId(long storeId);
 }

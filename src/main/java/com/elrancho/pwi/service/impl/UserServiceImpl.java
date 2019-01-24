@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
 
 		List<UserDto> returnValue = new ArrayList<>();
 
-		Iterable<UserEntity> users = userRepository.findUserByStoreDetails(storeRepository.findStoreByStoreId(storeId));
+		Iterable<UserEntity> users = userRepository.findUserByStoreId(storeRepository.findStoreByStoreId(storeId));
 
 		for (UserEntity user : users)
 			returnValue.add(modelMapper.map(user, UserDto.class));

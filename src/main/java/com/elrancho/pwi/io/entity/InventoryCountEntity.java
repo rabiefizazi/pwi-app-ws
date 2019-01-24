@@ -26,25 +26,30 @@ public class InventoryCountEntity implements Serializable {
 	@Column(name = "transactionidstring", length = 50)
 	private String transactionIdString;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "storeid")
-	private StoreEntity storeDetails;
+//	@ManyToOne(fetch=FetchType.LAZY)
+//	@JoinColumn(name = "storeid")
+	@Column(name = "storeid")
+	private long storeId;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "departmentid")
-	private DepartmentEntity departmentDetails;
+//	@ManyToOne(fetch=FetchType.LAZY)
+//	@JoinColumn(name = "departmentid")
+	@Column(name = "departmentid")
+	private long departmentId;
 
 	@Column(name = "username" )
 	private String username;
 
 	@Column(name = "vendoritem")
 	private long vendorItem;
+
+	@Column(name = "unitofmeasure")
+	private String unitOfMeasure;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumns({
-			@JoinColumn(name = "vendoritem", referencedColumnName = "vendoritem", insertable = false, updatable = false),
-			@JoinColumn(name = "storeid", referencedColumnName = "storeid", insertable = false, updatable = false) })
-	private ItemEntity itemDetails;
+//	@ManyToOne(fetch=FetchType.LAZY)
+//	@JoinColumns({
+//			@JoinColumn(name = "vendoritem", referencedColumnName = "vendoritem", insertable = false, updatable = false),
+//			@JoinColumn(name = "storeid", referencedColumnName = "storeid", insertable = false, updatable = false) })
+//	private long vendorItem;
 
 	@Column(name = "cost")
 	private double cost;
@@ -74,35 +79,49 @@ public class InventoryCountEntity implements Serializable {
 		this.transactionIdString = transactionIdString;
 	}
 
-	public StoreEntity getStoreDetails() {
-		return storeDetails;
-	}
-
-	public void setStoreDetails(StoreEntity storeDetails) {
-		this.storeDetails = storeDetails;
-	}
-
-	public DepartmentEntity getDepartmentDetails() {
-		return departmentDetails;
-	}
-
-	public void setDepartmentDetails(DepartmentEntity departmentDetails) {
-		this.departmentDetails = departmentDetails;
-	}
+//	public StoreEntity getStoreDetails() {
+//		return storeDetails;
+//	}
+//
+//	public void setStoreDetails(StoreEntity storeDetails) {
+//		this.storeDetails = storeDetails;
+//	}
+//
+//	public DepartmentEntity getDepartmentDetails() {
+//		return departmentDetails;
+//	}
+//
+//	public void setDepartmentDetails(DepartmentEntity departmentDetails) {
+//		this.departmentDetails = departmentDetails;
+//	}
+	
+	
 
 	public String getUsername() {
 		return username;
 	}
 
+
 	public void setUsername(String username) {
 		this.username = username;
 	}
-
-	public ItemEntity getItemDetails() {
-		return itemDetails;
+	
+	public long getStoreId() {
+		return storeId;
 	}
 
-	
+	public void setStoreId(long storeId) {
+		this.storeId = storeId;
+	}
+
+	public long getDepartmentId() {
+		return departmentId;
+	}
+
+	public void setDepartmentId(long departmentId) {
+		this.departmentId = departmentId;
+	}
+
 	public long getVendorItem() {
 		return vendorItem;
 	}
@@ -111,8 +130,12 @@ public class InventoryCountEntity implements Serializable {
 		this.vendorItem = vendorItem;
 	}
 
-	public void setItemDetails(ItemEntity itemDetails) {
-		this.itemDetails = itemDetails;
+	public String getUnitOfMeasure() {
+		return unitOfMeasure;
+	}
+
+	public void setUnitOfMeasure(String unitOfMeasure) {
+		this.unitOfMeasure = unitOfMeasure;
 	}
 
 	public double getCost() {

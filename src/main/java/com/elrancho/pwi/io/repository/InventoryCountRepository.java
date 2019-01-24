@@ -14,13 +14,17 @@ import com.elrancho.pwi.io.entity.StoreEntity;
 @Repository
 public interface InventoryCountRepository extends CrudRepository<InventoryCountEntity, Long> {
 
-	public InventoryCountEntity findInventoryCountByStoreDetailsAndDepartmentDetailsAndWeekEndDateAndItemDetails(
-			StoreEntity storeEntity, DepartmentEntity departmentEntity, LocalDate periodDate, ItemEntity itemEntity);
+	public InventoryCountEntity findInventoryCountByStoreIdAndDepartmentIdAndWeekEndDateAndVendorItem(
+			long storeId, long departmentId, LocalDate periodDate, long vendorItem);
 
-	public List<InventoryCountEntity> findInventoryCountByStoreDetailsAndDepartmentDetailsAndWeekEndDate(
-			StoreEntity storeEntity, DepartmentEntity departmentEntity, LocalDate periodDate);
+	public List<InventoryCountEntity> findInventoryCountByStoreIdAndDepartmentIdAndWeekEndDate(
+			long storeId, long departmentId, LocalDate periodDate);
 
-	public List<InventoryCountEntity> findInventoryCountByStoreDetailsAndDepartmentDetails(StoreEntity storeEntity,
-			DepartmentEntity departmentEntity);
+	public List<InventoryCountEntity> findInventoryCountByWeekEndDate(
+			LocalDate periodDate);
+	
+	public List<InventoryCountEntity> findInventoryCountByStoreIdAndDepartmentId(long storeId,
+			 long departmentId);
+	
 
 }

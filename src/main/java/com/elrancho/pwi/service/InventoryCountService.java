@@ -17,10 +17,12 @@ public interface InventoryCountService {
 			LocalDate weekEndDate, ItemDto itemDto);
 
 	
-	public List<InventoryCountDto> getInventoryCounts(StoreDto storeDto, DepartmentDto departmentDto,
+	public List<InventoryCountDto> getInventoryCountsByStoreByDepartmentByWeek(StoreDto storeDto, DepartmentDto departmentDto,
 			LocalDate weekEndDate);
 	
-	public List<InventoryCountDto> getInventoryCountsSummary(StoreDto storeDto, DepartmentDto departmentDto);
+	public List<InventoryCountDto> getInventoryCountsSummaryByStoreByDepartment(StoreDto storeDto, DepartmentDto departmentDto);
+	
+	public List<InventoryCountDto> getInventoryCountsSummaryByWeek(LocalDate weekEndDate);
 
 	public InventoryCountDto createInventoryCount(InventoryCountDto inventoryCountDto);
 

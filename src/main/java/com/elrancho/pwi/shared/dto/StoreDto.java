@@ -7,10 +7,10 @@ public class StoreDto {
 	private long storeId;
 	private String description;
 	private String district;
-	private List<DepartmentDto> departments;
-	private List<UserDto> users;
-	private List<ItemDto> items;
-	private List<InventoryCountDto> inventoryCounts;
+//	private List<DepartmentDto> departments;
+//	private List<UserDto> users;
+//	private List<ItemDto> items;
+//	private List<InventoryCountDto> inventoryCounts;
 
 	public long getStoreId() {
 		return storeId;
@@ -36,36 +36,36 @@ public class StoreDto {
 		this.district = district;
 	}
 
-	public List<DepartmentDto> getDepartments() {
-		return departments;
-	}
-
-	public void setDepartments(List<DepartmentDto> departments) {
-		this.departments = departments;
-	}
-
-	public List<UserDto> getUsers() {
-		return users;
-	}
-
-	public void setUsers(List<UserDto> users) {
-		this.users = users;
-	}
-
-	public List<ItemDto> getItems() {
-		return items;
-	}
-
-	public void setItems(List<ItemDto> items) {
-		this.items = items;
-	}
-
-	public List<InventoryCountDto> getInventoryCounts() {
-		return inventoryCounts;
-	}
-
-	public void setInventoryCounts(List<InventoryCountDto> inventoryCounts) {
-		this.inventoryCounts = inventoryCounts;
-	}
+//	public List<DepartmentDto> getDepartments() {
+//		return departments;
+//	}
+//
+//	public void setDepartments(List<DepartmentDto> departments) {
+//		this.departments = departments;
+//	}
+//
+//	public List<UserDto> getUsers() {
+//		return users;
+//	}
+//
+//	public void setUsers(List<UserDto> users) {
+//		this.users = users;
+//	}
+//
+//	public List<ItemDto> getItems() {
+//		return items;
+//	}
+//
+//	public void setItems(List<ItemDto> items) {
+//		this.items = items;
+//	}
+//
+//	public List<InventoryCountDto> getInventoryCounts() {
+//		return inventoryCounts;
+//	}
+//
+//	public void setInventoryCounts(List<InventoryCountDto> inventoryCounts) {
+//		this.inventoryCounts = inventoryCounts;
+//	}
 
 }

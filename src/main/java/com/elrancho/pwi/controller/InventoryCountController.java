@@ -1,5 +1,7 @@
 package com.elrancho.pwi.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -8,6 +10,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +23,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.amazonaws.util.IOUtils;
 import com.elrancho.pwi.service.DepartmentService;
 import com.elrancho.pwi.service.InventoryCountService;
 import com.elrancho.pwi.service.ItemService;
 import com.elrancho.pwi.service.StoreService;
 import com.elrancho.pwi.service.UserService;
+import com.elrancho.pwi.shared.Utils;
 import com.elrancho.pwi.shared.dto.DepartmentDto;
 import com.elrancho.pwi.shared.dto.InventoryCountDto;
 import com.elrancho.pwi.shared.dto.ItemDto;
@@ -92,13 +99,13 @@ public class InventoryCountController {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		LocalDate weekEndDate = LocalDate.parse(weekEndDateString, formatter);
 
-		Iterable<InventoryCountDto> inventoryCounts = inventoryCountService.getInventoryCounts(storeDto, departmentDto,
+		Iterable<InventoryCountDto> inventoryCounts = inventoryCountService.getInventoryCountsByStoreByDepartmentByWeek(storeDto, departmentDto,
 				weekEndDate);
 
 		InventoryCountRest inCountRest = new InventoryCountRest();
 		for (InventoryCountDto inventoryCount : inventoryCounts) {
 			inCountRest = modelMapper.map(inventoryCount, InventoryCountRest.class);
-			inCountRest.setUnitOfMeasure((itemService.getItem(inCountRest.getStoreId(), inCountRest.getVendorItem())).getUnitOfMeasure());
+			inCountRest.setItemDescription((itemService.getItem(inCountRest.getStoreId(), inCountRest.getVendorItem())).getDescription());
 			inventoryCountRest.add(inCountRest);
 		}
 			
@@ -108,12 +115,162 @@ public class InventoryCountController {
 		return returnValue;
 
 	}
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Get inventory count details by store by department by week end date
+		@GetMapping(path = "/totalInventory/{storeId}/{departmentId}/{weekEndDateString}/inventory.csv", produces = { MediaType.APPLICATION_JSON_VALUE,
+				MediaType.APPLICATION_XML_VALUE })
+		public void getInventoryCountToCsvFile(@PathVariable long storeId, @PathVariable long departmentId,
+				@PathVariable String weekEndDateString, HttpServletResponse response) throws IOException {
 
+			response.setContentType("text/csv");
+			response.setHeader("Content-Disposition", "attachment; file=inventory.csv");
+			
+			InventoryCountRestList returnValue = new InventoryCountRestList();
+			
+			List<InventoryCountRest> inventoryCountRest = new ArrayList<>();
+
+			ModelMapper modelMapper = new ModelMapper();
+
+			StoreDto storeDto = storeService.getStore(storeId);
+			DepartmentDto departmentDto = departmentService.getDepartment(storeId, departmentId);
+
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate weekEndDate = LocalDate.parse(weekEndDateString, formatter);
+
+			Iterable<InventoryCountDto> inventoryCounts = inventoryCountService.getInventoryCountsByStoreByDepartmentByWeek(storeDto, departmentDto,
+					weekEndDate);
+
+			InventoryCountRest inCountRest = new InventoryCountRest();
+			for (InventoryCountDto inventoryCount : inventoryCounts) {
+				inCountRest = modelMapper.map(inventoryCount, InventoryCountRest.class);
+				inCountRest.setItemDescription((itemService.getItem(inCountRest.getStoreId(), inCountRest.getVendorItem())).getDescription());
+				inventoryCountRest.add(inCountRest);
+			}
+				
+
+			returnValue.setInventoryCounts(inventoryCountRest);
+			
+			Utils.saveInventoryCountToCsvByStoreByDepartmentByWeek(response.getWriter(), inventoryCountRest);;
+
+		}
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+
+	// Get inventory count summary by store by week end date
+
+		@GetMapping(path = "/totalInventory/{weekEndDateString}", produces = { MediaType.APPLICATION_JSON_VALUE,
+				MediaType.APPLICATION_XML_VALUE})
+		public InventoryCountSummaryRestList getInventoryCountSummaryByWeek(@PathVariable String weekEndDateString) {
+
+			InventoryCountSummaryRestList inventoryCountSummaryRestList = new InventoryCountSummaryRestList();
+			List<InventoryCountSummaryRest> inventoryCountSummaryRests = new ArrayList<>();
+			
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate weekEndDate = LocalDate.parse(weekEndDateString, formatter);
+			
+			Iterable<InventoryCountDto> inventoryCounts = inventoryCountService.getInventoryCountsSummaryByWeek(weekEndDate);
+
+			Map<Long, Double> totalAmountMap = new LinkedHashMap<>();
+
+			double currentAmount, totalAmount;
+			for (InventoryCountDto inventoryCount : inventoryCounts) {
+				currentAmount = inventoryCount.getQuantity() * inventoryCount.getCost();
+
+				if (totalAmountMap.get(inventoryCount.getDepartmentId()) != null)
+					totalAmount = totalAmountMap.get(inventoryCount.getDepartmentId()) + currentAmount;
+
+				else
+					totalAmount = currentAmount;
+				
+				//round to 2 decimals only.
+				BigDecimal bd = new BigDecimal(Double.toString(totalAmount));
+				bd = bd.setScale(2, RoundingMode.HALF_UP);
+				totalAmount = bd.doubleValue();
+				
+				totalAmountMap.put(inventoryCount.getDepartmentId(), totalAmount);
+			}
+
+			InventoryCountSummaryRest inventoryCountSummaryRest;
+
+			for (Map.Entry<Long, Double> entry : totalAmountMap.entrySet()) {
+				DepartmentDto department = departmentService.getDepartmentByDepartment(entry.getKey());
+				long storeId=department.getStoreId();
+				inventoryCountSummaryRest = new InventoryCountSummaryRest();
+				inventoryCountSummaryRest.setStoreId(storeId);
+				inventoryCountSummaryRest.setDepartmentId(entry.getKey());
+				inventoryCountSummaryRest.setWeekEndDate(weekEndDate);
+				inventoryCountSummaryRest.setTotalInventory((entry.getValue()));
+				
+				inventoryCountSummaryRests.add(inventoryCountSummaryRest);
+			}
+			
+			inventoryCountSummaryRestList.setInventoryCountSummaries(inventoryCountSummaryRests);
+			
+			return inventoryCountSummaryRestList;			
+
+		}
+		
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		@GetMapping(path = "/totalInventory/{weekEndDateString}/InventoryCounts.csv")
+		public void downloadCSV(@PathVariable String weekEndDateString, HttpServletResponse response) throws IOException{
+
+			response.setContentType("text/csv");
+			response.setHeader("Content-Disposition", "attachment; file=customers.csv");
+			
+			InventoryCountSummaryRestList inventoryCountSummaryRestList = new InventoryCountSummaryRestList();
+			List<InventoryCountSummaryRest> inventoryCountSummaryRests = new ArrayList<>();
+			
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate weekEndDate = LocalDate.parse(weekEndDateString, formatter);
+			
+			Iterable<InventoryCountDto> inventoryCounts = inventoryCountService.getInventoryCountsSummaryByWeek(weekEndDate);
+
+			Map<Long, Double> totalAmountMap = new LinkedHashMap<>();
+
+			double currentAmount, totalAmount;
+			for (InventoryCountDto inventoryCount : inventoryCounts) {
+				currentAmount = inventoryCount.getQuantity() * inventoryCount.getCost();
+
+				if (totalAmountMap.get(inventoryCount.getDepartmentId()) != null)
+					totalAmount = totalAmountMap.get(inventoryCount.getDepartmentId()) + currentAmount;
+
+				else
+					totalAmount = currentAmount;
+				
+				//round to 2 decimals only.
+				BigDecimal bd = new BigDecimal(Double.toString(totalAmount));
+				bd = bd.setScale(2, RoundingMode.HALF_UP);
+				totalAmount = bd.doubleValue();
+				
+				totalAmountMap.put(inventoryCount.getDepartmentId(), totalAmount);
+			}
+
+			InventoryCountSummaryRest inventoryCountSummaryRest;
+
+			for (Map.Entry<Long, Double> entry : totalAmountMap.entrySet()) {
+				DepartmentDto department = departmentService.getDepartmentByDepartment(entry.getKey());
+				long storeId=department.getStoreId();
+				inventoryCountSummaryRest = new InventoryCountSummaryRest();
+				inventoryCountSummaryRest.setStoreId(storeId);
+				inventoryCountSummaryRest.setDepartmentId(entry.getKey());
+				inventoryCountSummaryRest.setWeekEndDate(weekEndDate);
+				inventoryCountSummaryRest.setTotalInventory((entry.getValue()));
+				
+				inventoryCountSummaryRests.add(inventoryCountSummaryRest);
+			}
+			
+			inventoryCountSummaryRestList.setInventoryCountSummaries(inventoryCountSummaryRests);
+			
+			Utils.saveInventoryCountToCsv(response.getWriter(), inventoryCountSummaryRests);		
+
+		}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
 	// Get inventory count summary by store by department by week end date
 
 	@GetMapping(path = "/totalInventory/{storeId}/{departmentId}", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	public InventoryCountSummaryRestList getInventoryCountSummary(@PathVariable long storeId,
+	public InventoryCountSummaryRestList getInventoryCountSummaryByStoreByDepartment(@PathVariable long storeId,
 			@PathVariable long departmentId) {
 
 		InventoryCountSummaryRestList inventoryCountSummaryRestList = new InventoryCountSummaryRestList();
@@ -122,7 +279,7 @@ public class InventoryCountController {
 		StoreDto storeDto = storeService.getStore(storeId);
 		DepartmentDto departmentDto = departmentService.getDepartment(storeId, departmentId);
 
-		Iterable<InventoryCountDto> inventoryCounts = inventoryCountService.getInventoryCountsSummary(storeDto,
+		Iterable<InventoryCountDto> inventoryCounts = inventoryCountService.getInventoryCountsSummaryByStoreByDepartment(storeDto,
 				departmentDto);
 
 		Map<LocalDate, Double> totalAmountMap = new LinkedHashMap<>();
@@ -180,12 +337,13 @@ public class InventoryCountController {
 		UserDto userDto = userService.getUserByUserId(inventoryCountDetail.getUserId());
 
 		InventoryCountDto inventoryCountDto = new InventoryCountDto();
-		inventoryCountDto.setStoreDetails(storeDto);
-		inventoryCountDto.setDepartmentDetails(departmentDto);
-		inventoryCountDto.setItemDetails(itemDto);
+		inventoryCountDto.setStoreId(storeDto.getStoreId());
+		inventoryCountDto.setDepartmentId(departmentDto.getDepartmentId());
+		inventoryCountDto.setVendorItem(itemDto.getVendorItem());
 		inventoryCountDto.setUsername(userDto.getUsername());
 		inventoryCountDto.setCost(inventoryCountDetail.getCost());
 		inventoryCountDto.setQuantity(inventoryCountDetail.getQuantity());
+		inventoryCountDto.setUnitOfMeasure(inventoryCountDetail.getUnitOfMeasure());
 
 		InventoryCountDto newInventoryCount = inventoryCountService.createInventoryCount(inventoryCountDto);
 
@@ -211,12 +369,13 @@ public class InventoryCountController {
 		UserDto userDto = userService.getUserByUserId(inventoryCountDetail.getUserId());
 
 		InventoryCountDto inventoryCountDto = new InventoryCountDto();
-		inventoryCountDto.setStoreDetails(storeDto);
-		inventoryCountDto.setDepartmentDetails(departmentDto);
-		inventoryCountDto.setItemDetails(itemDto);
+		inventoryCountDto.setStoreId(storeDto.getStoreId());
+		inventoryCountDto.setDepartmentId(departmentDto.getDepartmentId());
+		inventoryCountDto.setVendorItem(itemDto.getVendorItem());
 		inventoryCountDto.setUsername(userDto.getUsername());
 		inventoryCountDto.setCost(inventoryCountDetail.getCost());
 		inventoryCountDto.setQuantity(inventoryCountDetail.getQuantity());
+		inventoryCountDto.setUnitOfMeasure(inventoryCountDetail.getUnitOfMeasure());
 
 		InventoryCountDto updateInventoryCount = inventoryCountService.updateInventoryCount(inventoryCountDto);
 

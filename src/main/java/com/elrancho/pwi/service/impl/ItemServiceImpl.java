@@ -34,9 +34,9 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public ItemDto getItem(long storeId, long vendorItem) {
 
-		StoreEntity storeEntity = storeRepository.findStoreByStoreId(storeId);
+//		StoreEntity storeEntity = storeRepository.findStoreByStoreId(storeId);
 
-		ItemEntity itemEntity = itemRepository.findItemByStoreDetailsAndVendorItem(storeEntity, vendorItem);
+		ItemEntity itemEntity = itemRepository.findItemByStoreIdAndVendorItem(storeId, vendorItem);
 
 		if (itemEntity == null)
 			return null;
@@ -52,7 +52,8 @@ public class ItemServiceImpl implements ItemService {
 
 		ModelMapper modelMapper = new ModelMapper();
 
-		Iterable<ItemEntity> items = itemRepository.findItemByStoreDetails(storeRepository.findStoreByStoreId(storeId));
+//		Iterable<ItemEntity> items = itemRepository.findItemByStoreId(storeRepository.findStoreByStoreId(storeId));
+		Iterable<ItemEntity> items = itemRepository.findItemByStoreId(storeId);
 		for (ItemEntity item : items)
 			returnResult.add(modelMapper.map(item, ItemDto.class));
 
@@ -81,9 +82,9 @@ public class ItemServiceImpl implements ItemService {
 
 		ItemEntity itemEntity = modelMapper.map(itemDto, ItemEntity.class);
 
-		StoreEntity storeEntity = itemEntity.getStoreDetails();
+//		StoreEntity storeEntity = itemEntity.getStoreDetails();
 
-		if (itemRepository.findItemByStoreDetailsAndVendorItem(storeEntity, itemEntity.getVendorItem()) != null)
+		if (itemRepository.findItemByStoreIdAndVendorItem(itemDto.getStoreId(), itemDto.getVendorItem()) != null)
 			throw new RuntimeException("Item " + itemEntity.getVendorItem() + " already exist.");
 
 		itemEntity.setItemIdString(utils.generateItemId(30));
@@ -99,9 +100,9 @@ public class ItemServiceImpl implements ItemService {
 	public ItemDto updateItem(ItemDto itemDto) {
 
 		ModelMapper modelMapper = new ModelMapper();
-		StoreEntity storeEntity = modelMapper.map(itemDto.getStoreDetails(), StoreEntity.class);
+//		StoreEntity storeEntity = modelMapper.map(itemDto.getStoreDetails(), StoreEntity.class);
 
-		ItemEntity updatedItem = itemRepository.findItemByStoreDetailsAndVendorItem(storeEntity,
+		ItemEntity updatedItem = itemRepository.findItemByStoreIdAndVendorItem(itemDto.getStoreId(),
 				itemDto.getVendorItem());
 
 		if (updatedItem == null)
@@ -120,8 +121,7 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public ItemDto deleteItem(long storeId, long vendorItem) {
 
-		ItemEntity deletedItem = itemRepository
-				.findItemByStoreDetailsAndVendorItem(storeRepository.findStoreByStoreId(storeId), vendorItem);
+		ItemEntity deletedItem = itemRepository.findItemByStoreIdAndVendorItem(storeId, vendorItem);
 
 		ItemDto returnValue = new ModelMapper().map(deletedItem, ItemDto.class);
 

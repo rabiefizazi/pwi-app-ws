@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Item list upload</title>
+
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script language="javascript">
+	function isEmpty(str) {
+		return (!str || 0 === str.trim().length);
+	}
+
+	function attemptLogin() {
+
+		var username = document.getElementById("username").value;
+		var password = document.getElementById("password").value;
+
+		if (isEmpty(username)) {
+			alert("Username cannot be empty");
+			return;
+		}
+
+		if (isEmpty(password)) {
+			alert("Password cannot be empty");
+			return;
+		}
+
+		$.ajaxSetup({
+			"contentType" : "application/json"
+		});
+
+		var dataPayload = {
+			"username" : username,
+			"password" : password
+		};
+
+		$
+				.post(
+						'http://ec2-3-90-133-23.compute-1.amazonaws.com:8080/users/login',
+						JSON.stringify(dataPayload)).done(
+						function(data, status) {
+							document.getElementById("username").value = "";
+							document.getElementById("password").value = "";
+
+							if (status === "success") {
+								$("#not-successful-result").attr("style",
+										"display: none !important;");
+								$("#successful-result").attr("style",
+										"display: block !important;");
+								$("#login-form").attr("style",
+										"display: none !important;");
+								$("#itemlist-upload-form").attr("style",
+								"display: block !important;");
+
+							} else {
+								$("#successful-result").attr("style",
+										"display: none !important;");
+								$("#not-successful-result").attr("style",
+										"display: block !important;");
+							}
+
+						});
+	}
+</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+
+</head>
+<body>
+	<div align=center>
+		<p id="demo">
+			<img src="elranchologo.png" width="360" height="200" />
+		</p>
+
+		<div id="successful-result" style="display: none">
+			<h3>Login Successful!</h3>
+			<a href="http://ec2-3-90-133-23.compute-1.amazonaws.com:8080/inventorycounts/totalInventory/2019-01-19/InventoryCounts.csv">WeeklyInventory .CSV</a>
+		</div>
+		<div id="not-successful-result" style="display: none">
+			<h3>Login failed</h3>
+		</div>
+
+		<div id="login-form" style="display: block">
+			<form>
+				<table>
+
+					<tr>
+						<td width="50%">Username:</td>
+						<td width="50%"><input type="text" id="username" /></td>
+					</tr>
+					<tr>
+						<td width="50%">Password:</td>
+						<td width="50%"><input type="password" id="password" /></td>
+					</tr>
+					<tr>
+						<td width="50%"></td>
+						<td width="50%"><input type="button" value="Login"
+							onclick="javascript:attemptLogin()" /></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		<div id="itemlist-upload-form" style="display: none">
+			<form action="/upload" method="post" enctype="multipart/form-data">
+				<input type="file" name="file" id="file" /> <input type="submit"
+					name="submit" value="Submit" />
+			</form>
+		</div>
+	</div>
+
+
+</body>
+</html>

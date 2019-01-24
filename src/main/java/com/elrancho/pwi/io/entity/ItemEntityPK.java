@@ -11,7 +11,8 @@ public class ItemEntityPK implements Serializable {
 
 	private long vendorItem;
 	
-	private long storeDetails;
+//	private long storeDetails;
+	private long storeId;
 	
 	public long getVendorItem() {
 		return vendorItem;
@@ -21,19 +22,19 @@ public class ItemEntityPK implements Serializable {
 		this.vendorItem = vendorItem;
 	}
 
-	public long getStoreDetails() {
-		return storeDetails;
+	public long getStoreId() {
+		return storeId;
 	}
 
-	public void setStoreDetails(long storeDetails) {
-		this.storeDetails = storeDetails;
+	public void setstoreId(long storeId) {
+		this.storeId = storeId;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (storeDetails ^ (storeDetails >>> 32));
+		result = prime * result + (int) (storeId ^ (storeId >>> 32));
 		result = prime * result + (int) (vendorItem ^ (vendorItem >>> 32));
 		return result;
 	}
@@ -47,7 +48,7 @@ public class ItemEntityPK implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ItemEntityPK other = (ItemEntityPK) obj;
-		if (storeDetails != other.storeDetails)
+		if (storeId != other.storeId)
 			return false;
 		if (vendorItem != other.vendorItem)
 			return false;

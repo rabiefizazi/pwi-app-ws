@@ -24,15 +24,16 @@ public class DepartmentEntity implements Serializable {
 	@Column(name = "description", length = 50)
 	private String description;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "storeid")
-	private  StoreEntity storeDetails;
+//	@ManyToOne(fetch=FetchType.LAZY)
+//	@JoinColumn(name = "storeid")
+	@Column(name = "storeid")
+	private  long storeId;
 
 	@Column(name = "type", length = 25)
 	private String type;
 	
-	@OneToMany(mappedBy="departmentDetails", cascade=CascadeType.REMOVE, fetch=FetchType.LAZY)
-	private List<InventoryCountEntity> inventoryCounts;
+//	@OneToMany(mappedBy="departmentDetails", cascade=CascadeType.REMOVE, fetch=FetchType.LAZY)
+//	private List<InventoryCountEntity> inventoryCounts;
 
 	public long getDepartmentId() {
 		return departmentId;
@@ -50,12 +51,12 @@ public class DepartmentEntity implements Serializable {
 		this.description = description;
 	}
 
-	public StoreEntity getStoreDetails() {
-		return storeDetails;
+	public long getStoreId() {
+		return storeId;
 	}
 
-	public void setStoreDetails(StoreEntity storeDetails) {
-		this.storeDetails = storeDetails;
+	public void setStoreId(long storeId) {
+		this.storeId = storeId;
 	}
 
 	public String getType() {
@@ -66,13 +67,13 @@ public class DepartmentEntity implements Serializable {
 		this.type = type;
 	}
 
-	public List<InventoryCountEntity> getInventoryCounts() {
-		return inventoryCounts;
-	}
-
-	public void setInventoryCounts(List<InventoryCountEntity> inventoryCounts) {
-		this.inventoryCounts = inventoryCounts;
-	}
+//	public List<InventoryCountEntity> getInventoryCounts() {
+//		return inventoryCounts;
+//	}
+//
+//	public void setInventoryCounts(List<InventoryCountEntity> inventoryCounts) {
+//		this.inventoryCounts = inventoryCounts;
+//	}
 	
 	
 	

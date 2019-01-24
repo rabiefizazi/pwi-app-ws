@@ -2,11 +2,13 @@ package com.elrancho.pwi.shared.dto;
 
 import java.time.LocalDateTime;
 
-public class UserDto {
+import javax.persistence.Column;
+import javax.persistence.Id;
 
-//	private long userId;
+public class UserDto {
 	private String userIdString;
-	private StoreDto storeDetails;
+
+	private long storeId;
 	private boolean enabled;
 	private String email;
 	private String username;
@@ -27,12 +29,12 @@ public class UserDto {
 		this.userIdString = userIdString;
 	}
 
-	public StoreDto getStoreDetails() {
-		return storeDetails;
+	public long getStoreId() {
+		return storeId;
 	}
 
-	public void setStoreDetails(StoreDto storeDetails) {
-		this.storeDetails = storeDetails;
+	public void setStoreId(long storeId) {
+		this.storeId = storeId;
 	}
 
 	public boolean isEnabled() {

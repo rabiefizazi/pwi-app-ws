@@ -29,7 +29,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 	public DepartmentDto getDepartment(long storeId, long departmentId) {
 
 		DepartmentEntity departmentEntity = departmentRepository
-				.findDepartmentByStoreDetailsAndDepartmentId(storeRepository.findStoreByStoreId(storeId), departmentId);
+				.findDepartmentByStoreIdAndDepartmentId(storeId, departmentId);
 		if (departmentEntity== null)
 			
 			throw new RuntimeException("Department " + departmentId + " not found.");
@@ -46,10 +46,24 @@ public class DepartmentServiceImpl implements DepartmentService {
 		List<DepartmentDto> returnValue = new ArrayList<>();
 
 		Iterable<DepartmentEntity> departments = departmentRepository
-				.findDepartmentByStoreDetails(storeRepository.findStoreByStoreId(storeId));
+				.findDepartmentByStoreId(storeId);
 
 		for (DepartmentEntity department : departments)
 			returnValue.add(modelMapper.map(department, DepartmentDto.class));
+
+		return returnValue;
+	}
+	
+	@Override
+	public DepartmentDto getDepartmentByDepartment(long departmentId) {
+
+		ModelMapper modelMapper = new ModelMapper();
+
+		DepartmentDto returnValue = new DepartmentDto();
+
+		DepartmentEntity department = departmentRepository.findDepartmentByDepartmentId(departmentId);
+
+		returnValue = modelMapper.map(department, DepartmentDto.class);
 
 		return returnValue;
 	}
@@ -93,8 +107,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 		updatedDepartment.setDescription(departmentDto.getDescription());
 		// This is needed if the user create the department under the wrong store or
 		// similar scenarios
-		updatedDepartment.setStoreDetails(
-				modelMapper.map(storeService.updateStore(departmentDto.getStoreDetails()), StoreEntity.class));
+		updatedDepartment.setStoreId(departmentDto.getStoreId());
 
 		updatedDepartment = departmentRepository.save(updatedDepartment);
 

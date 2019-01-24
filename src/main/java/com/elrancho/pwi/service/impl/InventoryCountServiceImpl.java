@@ -50,29 +50,21 @@ public class InventoryCountServiceImpl implements InventoryCountService {
 			ItemDto itemDto) {
 
 		StoreEntity storeEntity = storeRepository.findStoreByStoreId(storeDto.getStoreId());
-		DepartmentEntity departmentEntity = departmentRepository
-				.findDepartmentByDepartmentId(departmentDto.getDepartmentId());
-		ItemEntity itemEntity = itemRepository.findItemByStoreDetailsAndVendorItem(departmentEntity.getStoreDetails(),
-				itemDto.getVendorItem());
 
 		InventoryCountEntity inventoryCountEntity = inventoryCountRepository
-				.findInventoryCountByStoreDetailsAndDepartmentDetailsAndWeekEndDateAndItemDetails(storeEntity,
-						departmentEntity, weekEndDate, itemEntity);
+				.findInventoryCountByStoreIdAndDepartmentIdAndWeekEndDateAndVendorItem(storeDto.getStoreId(),
+						departmentDto.getDepartmentId(), weekEndDate, itemDto.getVendorItem());
 
 		return new ModelMapper().map(inventoryCountEntity, InventoryCountDto.class);
 	}
 
 	@Override
-	public List<InventoryCountDto> getInventoryCounts(StoreDto storeDto, DepartmentDto departmentDto, LocalDate weekEndDate) {
+	public List<InventoryCountDto> getInventoryCountsByStoreByDepartmentByWeek(StoreDto storeDto, DepartmentDto departmentDto, LocalDate weekEndDate) {
 
 		List<InventoryCountDto> returnValue = new ArrayList<>();
 
-		StoreEntity storeEntity = storeRepository.findStoreByStoreId(storeDto.getStoreId());
-		DepartmentEntity departmentEntity = departmentRepository
-				.findDepartmentByDepartmentId(departmentDto.getDepartmentId());
-
 		Iterable<InventoryCountEntity> inventoryCounts = inventoryCountRepository
-				.findInventoryCountByStoreDetailsAndDepartmentDetailsAndWeekEndDate(storeEntity, departmentEntity,
+				.findInventoryCountByStoreIdAndDepartmentIdAndWeekEndDate(storeDto.getStoreId(), departmentDto.getDepartmentId(),
 						weekEndDate);
 
 		ModelMapper modelMapper = new ModelMapper();
@@ -84,16 +76,28 @@ public class InventoryCountServiceImpl implements InventoryCountService {
 	}
 	
 	@Override
-	public List<InventoryCountDto> getInventoryCountsSummary(StoreDto storeDto, DepartmentDto departmentDto) {
+	public List<InventoryCountDto> getInventoryCountsSummaryByWeek(LocalDate weekEndDate) {
 
 		List<InventoryCountDto> returnValue = new ArrayList<>();
 
-		StoreEntity storeEntity = storeRepository.findStoreByStoreId(storeDto.getStoreId());
-		DepartmentEntity departmentEntity = departmentRepository
-				.findDepartmentByDepartmentId(departmentDto.getDepartmentId());
+		Iterable<InventoryCountEntity> inventoryCounts = inventoryCountRepository
+				.findInventoryCountByWeekEndDate(weekEndDate);
+
+		ModelMapper modelMapper = new ModelMapper();
+
+		for (InventoryCountEntity inventoryCount : inventoryCounts)
+			returnValue.add(modelMapper.map(inventoryCount, InventoryCountDto.class));
+
+		return returnValue;
+	}
+	
+	@Override
+	public List<InventoryCountDto> getInventoryCountsSummaryByStoreByDepartment(StoreDto storeDto, DepartmentDto departmentDto) {
+
+		List<InventoryCountDto> returnValue = new ArrayList<>();
 
 		Iterable<InventoryCountEntity> inventoryCounts = inventoryCountRepository
-				.findInventoryCountByStoreDetailsAndDepartmentDetails(storeEntity, departmentEntity);
+				.findInventoryCountByStoreIdAndDepartmentId(storeDto.getStoreId(), departmentDto.getDepartmentId());
 
 		ModelMapper modelMapper = new ModelMapper();
 
@@ -110,23 +114,18 @@ public class InventoryCountServiceImpl implements InventoryCountService {
 
 		ModelMapper modelMapper = new ModelMapper();
 
-		StoreEntity storeEntity = modelMapper.map(inventoryCountDto.getStoreDetails(), StoreEntity.class);
-		DepartmentEntity departmentEntity = modelMapper.map(inventoryCountDto.getDepartmentDetails(),DepartmentEntity.class);
-		ItemEntity itemEntity = modelMapper.map(inventoryCountDto.getItemDetails(), ItemEntity.class);
-
 		InventoryCountEntity inventoryCountEntity = inventoryCountRepository
-				.findInventoryCountByStoreDetailsAndDepartmentDetailsAndWeekEndDateAndItemDetails(storeEntity,
-						departmentEntity, utils.getWeekEndDate(), itemEntity);
+				.findInventoryCountByStoreIdAndDepartmentIdAndWeekEndDateAndVendorItem(inventoryCountDto.getStoreId(),
+						inventoryCountDto.getDepartmentId(), utils.getWeekEndDate(), inventoryCountDto.getVendorItem());
 
 		if (inventoryCountEntity != null)
-			throw new RuntimeException("Item "+itemEntity.getVendorItem()+" already exist.");
+			throw new RuntimeException("Item "+inventoryCountDto.getVendorItem()+" already exist.");
 
 		inventoryCountEntity = modelMapper.map(inventoryCountDto, InventoryCountEntity.class);
 
 		inventoryCountEntity.setTransactionIdString(utils.generateInventoryCountId(30));
 		inventoryCountEntity.setWeekEndDate(utils.getWeekEndDate());
 		inventoryCountEntity.setDateUpdated(utils.getTodaysDate());
-		inventoryCountEntity.setVendorItem(inventoryCountEntity.getItemDetails().getVendorItem());
 
 		InventoryCountEntity newInventoryCount = inventoryCountRepository.save(inventoryCountEntity);
 
@@ -140,14 +139,9 @@ public class InventoryCountServiceImpl implements InventoryCountService {
 
 		ModelMapper modelMapper = new ModelMapper();
 
-		StoreEntity storeEntity = modelMapper.map(inventoryCountDto.getStoreDetails(), StoreEntity.class);
-		DepartmentEntity departmentEntity = modelMapper.map(inventoryCountDto.getDepartmentDetails(),
-				DepartmentEntity.class);
-		ItemEntity itemEntity = modelMapper.map(inventoryCountDto.getItemDetails(), ItemEntity.class);
-
 		InventoryCountEntity updatedInventoryCount = inventoryCountRepository
-				.findInventoryCountByStoreDetailsAndDepartmentDetailsAndWeekEndDateAndItemDetails(storeEntity,
-						departmentEntity, utils.getWeekEndDate(), itemEntity);
+				.findInventoryCountByStoreIdAndDepartmentIdAndWeekEndDateAndVendorItem(inventoryCountDto.getStoreId(),
+						inventoryCountDto.getDepartmentId(), utils.getWeekEndDate(), inventoryCountDto.getVendorItem());
 
 		if (updatedInventoryCount == null)
 			throw new RuntimeException("Item not found");

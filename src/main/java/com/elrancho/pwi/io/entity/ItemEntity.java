@@ -30,10 +30,9 @@ public class ItemEntity implements Serializable {
 	@Column(name = "vendoritem")
 	private long vendorItem;
 
-	@ManyToOne(fetch=FetchType.LAZY)
 	@Id
-	@JoinColumn(name = "storeid", referencedColumnName = "storeid")
-	private StoreEntity storeDetails;
+	@Column(name = "storeid")
+	private long storeId;
 
 	@Column(name = "description", length = 50)
 	private String description;
@@ -52,9 +51,6 @@ public class ItemEntity implements Serializable {
 
 	@Column(name = "dateuploaded")
 	private LocalDateTime dateUploaded;
-
-	@OneToMany(mappedBy = "itemDetails", cascade = CascadeType.REMOVE,fetch=FetchType.LAZY)
-	private List<InventoryCountEntity> inventoryCounts;
 
 	public String getItemIdString() {
 		return itemIdString;
@@ -80,12 +76,12 @@ public class ItemEntity implements Serializable {
 		this.vendorItem = vendorItem;
 	}
 
-	public StoreEntity getStoreDetails() {
-		return storeDetails;
+	public long getStoreId() {
+		return storeId;
 	}
 
-	public void setStoreDetails(StoreEntity storeDetails) {
-		this.storeDetails = storeDetails;
+	public void setStoreId(long storeId) {
+		this.storeId = storeId;
 	}
 
 	public String getDescription() {
@@ -136,12 +132,5 @@ public class ItemEntity implements Serializable {
 		this.dateUploaded = dateUploaded;
 	}
 
-	public List<InventoryCountEntity> getInventoryCounts() {
-		return inventoryCounts;
-	}
-
-	public void setInventoryCounts(List<InventoryCountEntity> inventoryCounts) {
-		this.inventoryCounts = inventoryCounts;
-	}
 
 }

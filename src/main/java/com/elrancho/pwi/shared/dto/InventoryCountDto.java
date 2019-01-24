@@ -3,19 +3,22 @@ package com.elrancho.pwi.shared.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class InventoryCountDto {
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
+public class InventoryCountDto {
 	private long transactionId;
 	private String transactionIdString;
-	private StoreDto storeDetails;
-	private DepartmentDto departmentDetails;
+	private long storeId;
+	private long departmentId;
 	private String username;
-	public double vendorItem;
-	private ItemDto itemDetails;
+	private long vendorItem;
 	private double cost;
 	private double quantity;
 	private LocalDate weekEndDate;
 	private LocalDateTime dateUpdated;
+	private String unitOfMeasure;
 
 	public long getTransactionId() {
 		return transactionId;
@@ -33,20 +36,20 @@ public class InventoryCountDto {
 		this.transactionIdString = transactionIdString;
 	}
 
-	public StoreDto getStoreDetails() {
-		return storeDetails;
+	public long getStoreId() {
+		return storeId;
 	}
 
-	public void setStoreDetails(StoreDto storeDetails) {
-		this.storeDetails = storeDetails;
+	public void setStoreId(long storeId) {
+		this.storeId = storeId;
 	}
 
-	public DepartmentDto getDepartmentDetails() {
-		return departmentDetails;
+	public long getDepartmentId() {
+		return departmentId;
 	}
 
-	public void setDepartmentDetails(DepartmentDto departmentDetails) {
-		this.departmentDetails = departmentDetails;
+	public void setDepartmentId(long departmentId) {
+		this.departmentId = departmentId;
 	}
 
 	public String getUsername() {
@@ -57,20 +60,12 @@ public class InventoryCountDto {
 		this.username = username;
 	}
 
-	public ItemDto getItemDetails() {
-		return itemDetails;
-	}
-
-	public double getVendorItem() {
+	public long getVendorItem() {
 		return vendorItem;
 	}
 
-	public void setVendorItem(double vendorItem) {
+	public void setVendorItem(long vendorItem) {
 		this.vendorItem = vendorItem;
-	}
-
-	public void setItemDetails(ItemDto itemDetails) {
-		this.itemDetails = itemDetails;
 	}
 
 	public double getCost() {
@@ -103,6 +98,14 @@ public class InventoryCountDto {
 
 	public void setDateUpdated(LocalDateTime dateUpdated) {
 		this.dateUpdated = dateUpdated;
+	}
+
+	public String getUnitOfMeasure() {
+		return unitOfMeasure;
+	}
+
+	public void setUnitOfMeasure(String unitOfMeasure) {
+		this.unitOfMeasure = unitOfMeasure;
 	}
 
 }

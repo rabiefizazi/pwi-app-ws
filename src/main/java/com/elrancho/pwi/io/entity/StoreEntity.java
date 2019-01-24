@@ -26,17 +26,17 @@ public class StoreEntity implements Serializable {
 	@Column(name = "district", length = 25)
 	private String district;
 
-	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-	private List<DepartmentEntity> departments;
-
-	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-	private List<UserEntity> users;
-
-	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-	private List<ItemEntity> items;
-
-	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-	private List<InventoryCountEntity> inventoryCounts;
+//	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+//	private List<DepartmentEntity> departments;
+//
+//	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+//	private List<UserEntity> users;
+//
+//	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+//	private List<ItemEntity> items;
+//
+//	@OneToMany(mappedBy = "storeDetails", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+//	private List<InventoryCountEntity> inventoryCounts;
 
 	public long getStoreId() {
 		return storeId;
@@ -62,36 +62,36 @@ public class StoreEntity implements Serializable {
 		this.district = district;
 	}
 
-	public List<DepartmentEntity> getDepartments() {
-		return departments;
-	}
-
-	public void setDepartments(List<DepartmentEntity> departments) {
-		this.departments = departments;
-	}
-
-	public List<UserEntity> getUsers() {
-		return users;
-	}
-
-	public void setUsers(List<UserEntity> users) {
-		this.users = users;
-	}
-
-	public List<ItemEntity> getItems() {
-		return items;
-	}
-
-	public void setItems(List<ItemEntity> items) {
-		this.items = items;
-	}
-
-	public List<InventoryCountEntity> getInventoryCounts() {
-		return inventoryCounts;
-	}
-
-	public void setInventoryCounts(List<InventoryCountEntity> inventoryCounts) {
-		this.inventoryCounts = inventoryCounts;
-	}
+//	public List<DepartmentEntity> getDepartments() {
+//		return departments;
+//	}
+//
+//	public void setDepartments(List<DepartmentEntity> departments) {
+//		this.departments = departments;
+//	}
+//
+//	public List<UserEntity> getUsers() {
+//		return users;
+//	}
+//
+//	public void setUsers(List<UserEntity> users) {
+//		this.users = users;
+//	}
+//
+//	public List<ItemEntity> getItems() {
+//		return items;
+//	}
+//
+//	public void setItems(List<ItemEntity> items) {
+//		this.items = items;
+//	}
+//
+//	public List<InventoryCountEntity> getInventoryCounts() {
+//		return inventoryCounts;
+//	}
+//
+//	public void setInventoryCounts(List<InventoryCountEntity> inventoryCounts) {
+//		this.inventoryCounts = inventoryCounts;
+//	}
 
 }

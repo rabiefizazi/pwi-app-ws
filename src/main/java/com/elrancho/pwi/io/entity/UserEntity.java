@@ -19,9 +19,10 @@ public class UserEntity implements Serializable {
 	@Column(name = "useridstring", length = 50)
 	private String userIdString;
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "storeid")
-	private StoreEntity storeDetails;
+//	@ManyToOne(fetch=FetchType.LAZY)
+//	@JoinColumn(name = "storeid")
+	@Column(name="storeid")
+	private long storeId;
 
 	@Column(name = "enabled")
 	private boolean enabled;
@@ -65,12 +66,12 @@ public class UserEntity implements Serializable {
 		this.userIdString = userIdString;
 	}
 
-	public StoreEntity getStoreDetails() {
-		return storeDetails;
+	public long getStoreId() {
+		return storeId;
 	}
 
-	public void setStoreDetails(StoreEntity storeDetails) {
-		this.storeDetails = storeDetails;
+	public void setStoreId(long storeId) {
+		this.storeId = storeId;
 	}
 
 	public boolean isEnabled() {

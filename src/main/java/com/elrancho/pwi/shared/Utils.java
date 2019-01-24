@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Service;
 
 import com.elrancho.pwi.security.SecurityConstants;
 import com.elrancho.pwi.ui.model.request.ItemDetailRequestModel;
+import com.elrancho.pwi.ui.model.response.InventoryCountRest;
+import com.elrancho.pwi.ui.model.response.InventoryCountSummaryRest;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
@@ -36,6 +39,8 @@ import com.opencsv.CSVWriter;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import io.jsonwebtoken.Claims;
@@ -83,7 +88,7 @@ public class Utils {
 
 	}
 
-	public LocalDate getWeekEndDate() {
+	public static LocalDate getWeekEndDate() {
 
 //		Added this condition to check if it is Sunday, so to allow the managers to still do inventory on that day as well.
 		if (LocalDate.now().getDayOfWeek().toString().equals("SUNDAY"))
@@ -228,5 +233,65 @@ public class Utils {
 		}
 
 		return returnValue;
+	}
+	
+	public static void saveInventoryCountToCsv(PrintWriter writer, List<InventoryCountSummaryRest> inventoryCounts) {
+		String[] CSV_HEADER = { "storeId", "departmentId", "weekEndDate", "totalInventory" };
+		StatefulBeanToCsv<InventoryCountSummaryRest> beanToCsv = null;
+		try (
+				CSVWriter csvWriter = new CSVWriter(writer,
+			                CSVWriter.DEFAULT_SEPARATOR,
+			                CSVWriter.NO_QUOTE_CHARACTER,
+			                CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+			                CSVWriter.DEFAULT_LINE_END);
+			){
+			csvWriter.writeNext(CSV_HEADER);
+			
+			// write List of Objects
+			ColumnPositionMappingStrategy<InventoryCountSummaryRest> mappingStrategy = new ColumnPositionMappingStrategy<InventoryCountSummaryRest>();
+			mappingStrategy.setType(InventoryCountSummaryRest.class);
+			mappingStrategy.setColumnMapping(CSV_HEADER);
+			beanToCsv = new StatefulBeanToCsvBuilder<InventoryCountSummaryRest>(writer)
+					.withMappingStrategy(mappingStrategy)
+	                .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+	                .build();
+			beanToCsv.write(inventoryCounts);
+			System.out.println("Write CSV using BeanToCsv successfully!");	
+			
+			}catch (Exception e) {
+				System.out.println("Writing CSV error!");
+				e.printStackTrace();
+			}
+	}
+	//Save inventory by store by department by week to csv file
+	public static void saveInventoryCountToCsvByStoreByDepartmentByWeek(PrintWriter writer, List<InventoryCountRest> inventoryCounts) {
+        	
+		String[] CSV_HEADER = { "storeId", "departmentId","userId",
+				"vendorItem","itemDescription","cost","quantity","weekEndDate", "dateUpdated", "itemMaster","unitOfMeasure"};
+		StatefulBeanToCsv<InventoryCountRest> beanToCsv = null;
+		try (
+				CSVWriter csvWriter = new CSVWriter(writer,
+			                CSVWriter.DEFAULT_SEPARATOR,
+			                CSVWriter.NO_QUOTE_CHARACTER,
+			                CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+			                CSVWriter.DEFAULT_LINE_END);
+			){
+			csvWriter.writeNext(CSV_HEADER);
+			
+			// write List of Objects
+			ColumnPositionMappingStrategy<InventoryCountRest> mappingStrategy = new ColumnPositionMappingStrategy<InventoryCountRest>();
+			mappingStrategy.setType(InventoryCountRest.class);
+			mappingStrategy.setColumnMapping(CSV_HEADER);
+			beanToCsv = new StatefulBeanToCsvBuilder<InventoryCountRest>(writer)
+					.withMappingStrategy(mappingStrategy)
+	                .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+	                .build();
+			beanToCsv.write(inventoryCounts);
+			System.out.println("Write CSV using BeanToCsv successfully!");	
+			
+			}catch (Exception e) {
+				System.out.println("Writing CSV error!");
+				e.printStackTrace();
+			}
 	}
 }

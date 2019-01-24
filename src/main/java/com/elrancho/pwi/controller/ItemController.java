@@ -103,7 +103,7 @@ public class ItemController {
 		
 		itemDto.setItemUPC(itemDetail.getItemUPC());
 		itemDto.setVendorItem(itemDetail.getVendorItem());
-		itemDto.setStoreDetails(storeService.getStore(itemDetail.getStoreId()));
+		itemDto.setStoreId(storeService.getStore(itemDetail.getStoreId()).getStoreId());
 		itemDto.setDescription(itemDetail.getDescription());
 		itemDto.setCost(itemDetail.getCost());
 		itemDto.setUnitOfMeasure(itemDetail.getUnitOfMeasure());
@@ -156,7 +156,7 @@ public class ItemController {
 			ItemDto itemDto = new ItemDto();
 			itemDto.setItemUPC(itemDetail.getItemUPC());
 			itemDto.setVendorItem(itemDetail.getVendorItem());
-			itemDto.setStoreDetails(storeService.getStore(itemDetail.getStoreId()));
+			itemDto.setStoreId(storeService.getStore(itemDetail.getStoreId()).getStoreId());
 			itemDto.setDescription(itemDetail.getDescription());
 			itemDto.setCost(itemDetail.getCost());
 			itemDto.setUnitOfMeasure(itemDetail.getUnitOfMeasure());

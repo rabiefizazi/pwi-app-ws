@@ -74,7 +74,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 		res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
 		res.addHeader("userid", userDto.getUserIdString());
 		res.addHeader("username", userDto.getUsername());
-		res.addHeader("storeId", Long.toString(userDto.getStoreDetails().getStoreId()));
+		res.addHeader("storeId", Long.toString(userDto.getStoreId()));
 		
 	}
 }

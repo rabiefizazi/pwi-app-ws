@@ -11,9 +11,9 @@ import com.elrancho.pwi.io.entity.StoreEntity;
 @Repository
 public interface ItemRepository extends CrudRepository<ItemEntity, Long> {
 
-	public ItemEntity findItemByStoreDetailsAndVendorItem(StoreEntity storeEntity, long vendorItem);
+	public ItemEntity findItemByStoreIdAndVendorItem(long storeId, long vendorItem);
 	
-	public List<ItemEntity> findItemByStoreDetails(StoreEntity storeEntity);
+	public List<ItemEntity> findItemByStoreId(long storeId);
 	
 	public ItemEntity findItemByVendorItem(long vendorItem);
 	

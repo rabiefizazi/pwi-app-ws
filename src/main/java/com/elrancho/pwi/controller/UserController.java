@@ -127,7 +127,7 @@ public class UserController {
 			operationStatus.setOperationResult(RequestOperationStatus.ERROR.name().toString());
 			return new ResponseEntity<>(operationStatus, HttpStatus.FAILED_DEPENDENCY);
 		}
-		newUser.setStoreDetails(storeDto);
+		newUser.setStoreId(storeDto.getStoreId());
 
 		String additionStatus = userService.createUser(newUser);
 
@@ -187,10 +187,10 @@ public class UserController {
 	}
 
 	/*
-	 * http://localhost:8080/perishablesWeeklyInventory/users/email-verification?
+	 * http://ec2-3-90-133-23.compute-1.amazonaws.com:8080/perishablesWeeklyInventory/users/email-verification?
 	 * token=sdfsdf
 	 **/
-	@CrossOrigin(origins = "http://ec2-54-163-206-204.compute-1.amazonaws.com:8080")
+	@CrossOrigin(origins = "http://ec2-3-90-133-23.compute-1.amazonaws.com:8080")
 	@GetMapping(path = "/email-verification", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
 	public OperationStatusModel verificationEmail(@RequestParam(value = "token") String token) {
@@ -208,7 +208,7 @@ public class UserController {
 		return returnValue;
 	}
 
-	@CrossOrigin(origins = "http://ec2-54-163-206-204.compute-1.amazonaws.com:8080")
+	@CrossOrigin(origins = "http://ec2-3-90-133-23.compute-1.amazonaws.com:8080")
 	@PostMapping(path = "/password-reset-request", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE,
 					MediaType.APPLICATION_XML_VALUE })
@@ -227,7 +227,7 @@ public class UserController {
 		return returnValue;
 	}
 
-	@CrossOrigin(origins = "http://ec2-54-163-206-204.compute-1.amazonaws.com:8080")
+	@CrossOrigin(origins = "http://ec2-3-90-133-23.compute-1.amazonaws.com:8080")
 	@PostMapping(path = "/password-reset", consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
 	public OperationStatusModel resetPassword(@RequestBody PasswordResetModel passwordResetModel) {

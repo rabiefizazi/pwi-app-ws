@@ -15,7 +15,7 @@ public interface UserRepository extends CrudRepository<UserEntity, Long> {
 
 	public UserEntity findUserByUserIdString(String username);
 
-	public List<UserEntity> findUserByStoreDetails(StoreEntity StoreEntity);
+	public List<UserEntity> findUserByStoreId(StoreEntity StoreEntity);
 
 	public UserEntity findUserByEmailConfirmationToken(String token);
 	
