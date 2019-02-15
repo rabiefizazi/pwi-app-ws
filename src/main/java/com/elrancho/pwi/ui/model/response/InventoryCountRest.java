@@ -1,5 +1,7 @@
 package com.elrancho.pwi.ui.model.response;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -12,6 +14,7 @@ public class InventoryCountRest {
 	private String itemDescription;
 	private double cost;
 	private double quantity;
+	private double totalAmount;
 	private LocalDate weekEndDate;
 	private LocalDateTime dateUpdated;
 	private boolean itemMaster;
@@ -82,6 +85,21 @@ public String getUnitOfMeasure() {
 
 	public void setQuantity(double quantity) {
 		this.quantity = quantity;
+	}
+
+	public double getTotalAmount() {
+		totalAmount = getCost()*getQuantity();
+		
+		//round to 2 decimals only.
+		BigDecimal bd = new BigDecimal(Double.toString(totalAmount));
+		bd = bd.setScale(2, RoundingMode.HALF_UP);
+		totalAmount = bd.doubleValue();
+		
+		return totalAmount;
+	}
+
+	public void setTotalAmount(double totalAmount) {
+		this.totalAmount = totalAmount;
 	}
 
 	public LocalDate getWeekEndDate() {

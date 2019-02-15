@@ -7,27 +7,23 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-
 @SpringBootApplication
 public class PerishablesWeeklyInventoryApplication extends SpringBootServletInitializer {
 
-	
-	
 	public static void main(String[] args) {
 		SpringApplication.run(PerishablesWeeklyInventoryApplication.class, args);
 	}
-	
+
 	@Override
-	  protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-	      return builder.sources(PerishablesWeeklyInventoryApplication.class);
-	  }
-	
-	
-	@Bean 
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+		return builder.sources(PerishablesWeeklyInventoryApplication.class);
+	}
+
+	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Bean
 	public SpringApplicationContext springApplicationContext() {
 		return new SpringApplicationContext();

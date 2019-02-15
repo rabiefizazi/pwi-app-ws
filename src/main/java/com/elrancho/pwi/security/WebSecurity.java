@@ -26,10 +26,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http.csrf().disable().authorizeRequests().antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()
+		http.csrf().disable().authorizeRequests()
+				.antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()
 				.antMatchers(HttpMethod.GET, SecurityConstants.VERIFICATION_EMAIL_URL).permitAll()
 				.antMatchers(HttpMethod.GET, "/login").permitAll()
-				//.antMatchers(HttpMethod.GET, "/inventorycounts/totalInventory/1008/1008501/2019-01-26/inventory.csv").permitAll()
 				.antMatchers(HttpMethod.POST, SecurityConstants.PASSWORD_RESET_REQUEST_URL).permitAll()
 				.antMatchers(HttpMethod.POST, SecurityConstants.PASSWORD_RESET_URL).permitAll()
 				.antMatchers(HttpMethod.GET, SecurityConstants.STORES_URL).permitAll()
