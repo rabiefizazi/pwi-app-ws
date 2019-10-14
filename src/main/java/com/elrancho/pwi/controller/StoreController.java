@@ -27,7 +27,7 @@ public class StoreController {
 	@Autowired
 	StoreService storeService;
 
-	@GetMapping(path = "/{storeId}", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	@GetMapping(path = "/{storeId}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public StoreRest store(@PathVariable long storeId) {
 
 		StoreDto storeDto = storeService.getStore(storeId);

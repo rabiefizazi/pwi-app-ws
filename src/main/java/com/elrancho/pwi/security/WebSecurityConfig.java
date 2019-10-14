@@ -3,6 +3,7 @@ package com.elrancho.pwi.security;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -12,12 +13,12 @@ import com.elrancho.pwi.service.UserService;
 import com.elrancho.pwi.shared.Utils;
 
 @EnableWebSecurity
-public class WebSecurity extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private final UserService userDetailsService;
 	private final BCryptPasswordEncoder bCryptSecurityPasswordEncoder;
 
-	public WebSecurity(UserService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+	public WebSecurityConfig(UserService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
 
 		this.userDetailsService = userDetailsService;
 		this.bCryptSecurityPasswordEncoder = bCryptPasswordEncoder;
@@ -52,4 +53,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 		return filter;
 	}
 
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().antMatchers("/monitoring/**");
+	}
+	
 }
